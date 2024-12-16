@@ -15,4 +15,11 @@ if(NOT ftxui_POPULATED)
 endif()
 
 
+FetchContent_Declare( clipp 
+    GIT_REPOSITORY https://github.com/muellan/clipp
+    GIT_TAG v1.2.3
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/clipp"
+    GIT_PROGRESS True
+)
 
+FetchContent_MakeAvailable( clipp )
