@@ -34,3 +34,6 @@
 #Directories 
 /external/*
 /build/*
+
+#Do not ignore CMakeLists
+!/external/CMakeLists.txt
