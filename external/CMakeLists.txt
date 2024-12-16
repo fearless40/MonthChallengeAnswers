@@ -11,13 +11,13 @@ FetchContent_Declare(ftxui
 
 FetchContent_GetProperties(ftxui)
 if(NOT ftxui_POPULATED)
-  FetchContent_MakeAvailable(ftxui)
+  #FetchContent_MakeAvailable(ftxui)
 endif()
 
 
 FetchContent_Declare( clipp 
-    GIT_REPOSITORY https://github.com/muellan/clipp
-    GIT_TAG v1.2.3
+    GIT_REPOSITORY https://github.com/GerHobbelt/clipp
+    GIT_TAG master
     SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/clipp"
     GIT_PROGRESS True
 )
