@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+#Directories 
+/external/*
+/build/*
