@@ -7,9 +7,11 @@ FetchContent_Declare(ftxui
   GIT_PROGRESS True
 )
 
+
+
 FetchContent_GetProperties(ftxui)
 if(NOT ftxui_POPULATED)
-  FetchContent_Declare(ftxui)
+  FetchContent_MakeAvailable(ftxui)
 endif()
 
 
