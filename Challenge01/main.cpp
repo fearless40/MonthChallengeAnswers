@@ -1,6 +1,6 @@
 #include <iostream>
 
-int main(unsigned char *argv, unsigned char *argc)
+int main(int argc, char *argv[])
 {
     std::cout << "Hello world" << '/n';
 }
