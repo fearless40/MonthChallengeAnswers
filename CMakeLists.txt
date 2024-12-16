@@ -24,3 +24,4 @@ if (MSVC_VERSION GREATER_EQUAL "1900")
     endif()
 endif()
 
+add_subdirectory(external)
