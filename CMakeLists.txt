@@ -25,3 +25,4 @@ if (MSVC_VERSION GREATER_EQUAL "1900")
 endif()
 
 add_subdirectory(external)
+add_subdirectory(Challenge01)
