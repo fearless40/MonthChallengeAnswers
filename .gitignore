@@ -38,3 +38,4 @@
 
 #Do not ignore CMakeLists
 !/external/CMakeLists.txt
+!/build/FileLeftEmpty.txt
