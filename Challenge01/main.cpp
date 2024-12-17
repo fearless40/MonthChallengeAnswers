@@ -61,16 +61,10 @@ std::variant<int, const std::string_view> parse_number_positive(const std::strin
     return parse_number(string);
 }
 
-struct ReadComma
+struct Position
 {
-    std::string data;
-    int line{0};
-    friend std::istream &operator>>(std::istream &stream, ReadComma &reader)
-    {
-        stream >> reader.data;
-        reader.line = reader.line + 1;
-        return stream;
-    }
+    std::size_t row;
+    std::size_t col;
 };
 
 struct FileData
@@ -78,12 +72,21 @@ struct FileData
     std::size_t rows;
     std::size_t cols;
     std::vector<std::int16_t> values;
-};
 
-struct Position
-{
-    std::size_t row;
-    std::size_t col;
+    std::optional<std::int16_t> at(const Position &pos)
+    {
+        auto index = to_index(pos);
+        if (index > values.size())
+        {
+            return {};
+        }
+        return values[index];
+    }
+
+    constexpr std::size_t to_index(const Position &pos)
+    {
+        return pos.row * cols + pos.col;
+    }
 };
 
 std::optional<Position> parse_excel_fmt(std::string_view value)
@@ -259,6 +262,10 @@ std::optional<FileData> load_from_file(std::filesystem::path filename)
     return {{rowCount, colCount, std::move(data)}};
 }
 
+bool non_interactive_mode(FileData &board, const std::vector<std::string> &guesses)
+{
+}
+
 int main(int argc, char *argv[])
 {
     using namespace clipp;
@@ -266,9 +273,10 @@ int main(int argc, char *argv[])
 
     std::string filename;
     std::vector<std::string> guesses;
+    bool runAutomated = false;
 
     auto cli = (required("--load") & value("file", filename),
-                required("--guess") & values("guesses", guesses));
+                option("--guess").set(runAutomated) & values("guesses", guesses));
 
     auto result = parse(argc, argv, cli);
 
