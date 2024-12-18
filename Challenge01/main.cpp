@@ -18,8 +18,9 @@ void error(const std::string_view errorMsg)
     std::cout << "ERROR: " << errorMsg << '\n';
 }
 
-char to_lower( const char c) {
-    return std::tolower( static_cast<unsigned char>(c));
+char to_lower(const char c)
+{
+    return std::tolower(static_cast<unsigned char>(c));
 }
 
 std::variant<int, const std::string_view> parse_number(const std::string_view string)
@@ -290,16 +291,18 @@ void non_interactive_mode(FileData &board, const std::vector<std::string> &guess
     }
 }
 
-void interactive_mode(FileData &board, const std::filesystem::path & filename )
+void interactive_mode(FileData &board, const std::filesystem::path &filename)
 {
     using std::cout;
-    auto show_banner = [](const std::string_view sview) {
-        cout << std::format( "{:-^60}", sview) << '\n';    
+    auto show_banner = [](const std::string_view sview)
+    {
+        cout << std::format("{:-^60}", sview) << '\n';
     };
 
-    auto show_help = []() { 
-        const char e = '\n';    
-        cout << "Commands:" << e; 
+    auto show_help = []()
+    {
+        const char e = '\n';
+        cout << "Commands:" << e;
         cout << "quit -> quits the program" << e;
         cout << "show -> shows the board. Takes subcommands" << e;
         cout << "   show board -> shows the board (default)" << e;
@@ -307,74 +310,93 @@ void interactive_mode(FileData &board, const std::filesystem::path & filename )
         cout << "   show col -> ask for the col number and shows that col" << e;
         cout << "   show window -> asks for a range of col and row and will display it." << e;
         cout << "Otherwise: " << e;
-        cout << "Excel format to look up value.\nExample: A1 or B2\nOr enter in col,row\nExample: 1,2\n"; 
-   };
-
-    
+        cout << "Excel format to look up value.\nExample: A1 or B2\nOr enter in col,row\nExample: 1,2\n";
+    };
 
     const char e = '\n';
     show_banner("Challenge 01 Interactive");
     cout << "File Name: " << filename.filename() << e;
     show_help();
-    
-    std::string userInput; 
-    while ( userInput != "quit"sv ){
+
+    std::string userInput;
+    while (userInput != "quit"sv)
+    {
         cout << "Input: ";
-        std::getline( std::cin, userInput);
-        cout << "Echo: " << userInput << e;
+
+        // Clear white space
+        std::cin >> std::ws;
+
+        // Grab an entire line rather than a word
+        std::getline(std::cin, userInput);
 
         // Lowercase the string
-        std::ranges::transform( userInput, userInput.begin(), to_lower); 
+        std::ranges::transform(userInput, userInput.begin(), to_lower);
 
-        if( userInput.starts_with("quit"sv)) break; 
+        if (userInput.starts_with("quit"sv))
+            break;
 
-        if(userInput.starts_with("show"sv) ) {
+        if (userInput.starts_with("show"sv))
+        {
 
-            if( userInput.find("row"sv) != std::string::npos ){
-                if( board.cols > 30 ){
+            if (userInput.find("row"sv) != std::string::npos)
+            {
+                if (board.cols > 30)
+                {
                     cout << "Too many columns to display in this row." << e;
                     continue;
                 }
-                
+
                 cout << "Row #: ";
                 std::size_t row;
                 std::cin >> row;
 
-                cout << "Row " << row << " = ";
-                for (Position p{row, 0}; p.col < board.cols; ++p.col) {
+                cout << "Row: " << row << e;
+                for (Position p{row, 0}; p.col < board.cols; ++p.col)
+                {
                     auto lookUp = board.at(p);
-                    if( !lookUp ) {
+                    if (!lookUp)
+                    {
                         cout << "Invalid row. Stopping." << e;
                         break;
                     }
-                    cout << std::format( "{:^5}", lookUp.value() );
-                } 
-
-                continue;
-
+                    cout << std::format("{:^5}", lookUp.value());
+                }
+                cout << e;
             }
-            else if( userInput.find("col"sv) != std::string::npos)  {
-                if( board.rows > 30 ){
+            else if (userInput.find("col"sv) != std::string::npos)
+            {
+                if (board.rows > 30)
+                {
                     cout << "Too many rows to display in this column." << e;
                     continue;
                 }
-                
+
                 cout << "Col #: ";
                 std::size_t col;
                 std::cin >> col;
+                cout << "Col: " << col << e;
 
-                for (Position p{0, col}; p.row < board.rows; ++p.row) {
+                if (col > board.cols)
+                {
+                    cout << "Invalid col. Stopping." << e;
+                    continue;
+                }
+
+                for (Position p{0, col}; p.row < board.rows; ++p.row)
+                {
                     auto lookUp = board.at(p);
-                    if( !lookUp ) {
+                    if (!lookUp)
+                    {
                         cout << "Invalid col. Stopping." << e;
                         break;
                     }
-                    cout << std::format( "{:^5}", lookUp.value() );
-                } 
-
+                    cout << std::format("{:^5}", lookUp.value());
+                }
+                cout << e;
                 continue;
             }
-            else if( userInput.find("window"sv) != std::string::npos) {
+            else if (userInput.find("window"sv) != std::string::npos)
+            {
                 std::string upperLeftText;
                 std::string lowerRightText;
                 cout << "Upper left position (excel format): ";
@@ -382,10 +404,11 @@ void interactive_mode(FileData &board, const std::filesystem::path & filename )
                 cout << "Lower right position (excel format): ";
                 std::cin >> lowerRightText;
 
-                auto upperLeft = parse_row_col_format( upperLeftText);
-                auto lowerRight = parse_row_col_format( lowerRightText );
+                auto upperLeft = parse_row_col_format(upperLeftText);
+                auto lowerRight = parse_row_col_format(lowerRightText);
 
-                if( !upperLeft || !lowerRight) {
+                if (!upperLeft || !lowerRight)
+                {
                     cout << "Invalid formats entered." << e;
                     continue;
                 }
@@ -394,66 +417,79 @@ void interactive_mode(FileData &board, const std::filesystem::path & filename )
                 {
                     auto ul = upperLeft.value();
                     auto lr = lowerRight.value();
-                    ful.col = std::min( ul.col, lr.col);
-                    ful.row = std::min( ul.row, lr.row);
-                    flr.col = std::max( ul.col, lr.col);
-                    flr.row = std::max( ul.row, lr.row);
+                    ful.col = std::min(ul.col, lr.col);
+                    ful.row = std::min(ul.row, lr.row);
+                    flr.col = std::max(ul.col, lr.col);
+                    flr.row = std::max(ul.row, lr.row);
                 }
 
-                if( flr.col - ful.col > 30 || flr.row - ful.row > 30 ) {
+                if (flr.col - ful.col > 30 || flr.row - ful.row > 30)
+                {
                     cout << "Too large of a window to display. Please try a smaller window." << e;
                     continue;
                 }
 
-
-                for( std::size_t row = ful.row; row < flr.row; ++row){
-                    for( std::size_t col = ful.col; col < flr.col; ++col){
-                        Position p{ row, col};
+                for (std::size_t row = ful.row; row <= flr.row; ++row)
+                {
+                    for (std::size_t col = ful.col; col <= flr.col; ++col)
+                    {
+                        Position p{row, col};
                         auto lookUp = board.at(p);
-                        if( !lookUp ) {
+                        if (!lookUp)
+                        {
                             cout << "Invalid value Stopping." << e;
                             break;
                         }
-                        cout << std::format( "{:^5}", lookUp.value() );
+                        cout << std::format("{:^5}", lookUp.value());
                     }
                     cout << e;
-                } 
+                }
                 continue;
             }
-            else {
+            else
+            {
                 // Show the entire board
-                for( std::size_t row = 0; row < board.rows; ++row){
-                    for( std::size_t col = 0; col < board.cols; ++col){
-                        Position p{ row, col};
+                for (std::size_t row = 0; row < board.rows; ++row)
+                {
+                    for (std::size_t col = 0; col < board.cols; ++col)
+                    {
+                        Position p{row, col};
                         auto lookUp = board.at(p);
-                        if( !lookUp ) {
+                        if (!lookUp)
+                        {
                             cout << "Invalid value Stopping." << e;
                             break;
                         }
-                        cout << std::format( "{:^5}", lookUp.value() );
+                        cout << std::format("{:^5}", lookUp.value());
                     }
                     cout << e;
-                } 
+                }
                 continue;
             }
         }
-        else {
-            auto guess = parse_row_col_format( userInput );
-            if( guess ) {
-                auto val = board.at( guess.value() );
-                if( val ) {
+        else
+        {
+            auto guess = parse_row_col_format(userInput);
+            if (guess)
+            {
+                auto val = board.at(guess.value());
+                if (val)
+                {
                     cout << " = " << val.value() << e;
-                } else {
-                    cout << "Out of bounds." << e; 
                 }
-            } else {
+                else
+                {
+                    cout << "Out of bounds." << e;
+                }
+            }
+            else
+            {
                 cout << "Invalid format." << e;
                 show_banner("Help");
                 show_help();
             }
         }
     }
-
 }
 
 int main(int argc, char *argv[])
@@ -480,7 +516,7 @@ int main(int argc, char *argv[])
     auto board = load_from_file(filename);
     if (!board)
     {
-        error( "File could not be loaded. Quitting.");
+        error("File could not be loaded. Quitting.");
         return -1;
     }
 
@@ -488,7 +524,8 @@ int main(int argc, char *argv[])
     {
         non_interactive_mode(board.value(), guesses);
     }
-    else {
-        interactive_mode( board.value(), filename );
+    else
+    {
+        interactive_mode(board.value(), filename);
     }
 }
