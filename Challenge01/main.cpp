@@ -76,20 +76,22 @@ struct FileData
     std::optional<std::int16_t> at(const Position &pos)
     {
         auto index = to_index(pos);
-        if (index > values.size())
+        // std::cout << std::format("Input: {}:{} index: {} / {}", pos.col, pos.row, index, values.size()) << '\n';
+        if (index >= values.size())
         {
             return {};
         }
         return values[index];
     }
 
-    constexpr std::size_t to_index(const Position &pos)
+    constexpr std::size_t
+    to_index(const Position &pos)
     {
         return pos.row * cols + pos.col;
     }
 };
 
-std::optional<Position> parse_excel_fmt(std::string_view value)
+std::optional<Position> parse_excel_fmt(const std::string_view value)
 {
     auto pos = value.find_first_of("0123456789");
     if (pos == std::string_view::npos)
@@ -123,7 +125,7 @@ std::optional<Position> parse_excel_fmt(std::string_view value)
 }
 
 std::optional<Position>
-parse_comma_fmt(std::string_view value)
+parse_comma_fmt(const std::string_view value)
 {
     auto pos = value.find_first_of(",");
     auto colText = value.substr(0, pos);
@@ -147,7 +149,7 @@ parse_comma_fmt(std::string_view value)
 }
 
 std::optional<Position>
-parse_row_col_format(std::string_view value)
+parse_row_col_format(const std::string_view value)
 {
     // Check the format
     auto pos = value.find_first_of(",");
@@ -262,8 +264,29 @@ std::optional<FileData> load_from_file(std::filesystem::path filename)
     return {{rowCount, colCount, std::move(data)}};
 }
 
-bool non_interactive_mode(FileData &board, const std::vector<std::string> &guesses)
+void non_interactive_mode(FileData &board, const std::vector<std::string> &guesses)
 {
+    for (const auto &guess : guesses)
+    {
+        const auto decoded = parse_row_col_format(guess);
+        if (decoded)
+        {
+            auto val = board.at(decoded.value());
+            if (val)
+            {
+                std::cout << val.value() << " ";
+            }
+            else
+            {
+                std::cout << "OOB" << " ";
+            }
+        }
+    }
+}
+
+void interactive_mode(FileData &board)
+{
+    using std::cout;
 }
 
 int main(int argc, char *argv[])
@@ -303,4 +326,10 @@ int main(int argc, char *argv[])
     }
 
     std::ranges::copy(val.values, std::ostream_iterator<int>(std::cout, " | "));
+    std::cout << '\n';
+
+    if (runAutomated)
+    {
+        non_interactive_mode(val, guesses);
+    }
 }
