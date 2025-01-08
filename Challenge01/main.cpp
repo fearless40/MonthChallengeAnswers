@@ -1,15 +1,15 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <format>
-#include <optional>
-#include <filesystem>
-#include <fstream>
-#include <variant>
-#include <ranges>
+#include "..\external\clipp\include\clipp.h"
 #include <algorithm>
 #include <charconv>
-#include "..\external\clipp\include\clipp.h"
+#include <filesystem>
+#include <format>
+#include <fstream>
+#include <iostream>
+#include <optional>
+#include <ranges>
+#include <string>
+#include <variant>
+#include <vector>
 
 using std::operator""sv;
 
@@ -27,16 +27,16 @@ std::variant<int, const std::string_view> parse_number(const std::string_view st
 {
     std::string val;
 
-    auto foundLetter = std::find_if(string.begin(), string.end(), [](auto c)
-                                    { return std::isalpha(static_cast<unsigned char>(c)); });
+    auto foundLetter =
+        std::find_if(string.begin(), string.end(), [](auto c) { return std::isalpha(static_cast<unsigned char>(c)); });
 
     if (foundLetter != string.end())
     {
         return "Letters found in input."sv;
     }
 
-    std::copy_if(string.begin(), string.end(), std::back_inserter(val), [](auto c)
-                 { return std::isdigit(static_cast<unsigned char>(c)) || c == '-'; });
+    std::copy_if(string.begin(), string.end(), std::back_inserter(val),
+                 [](auto c) { return std::isdigit(static_cast<unsigned char>(c)) || c == '-'; });
 
     int number;
     auto result = std::from_chars(val.data(), val.data() + val.size(), number);
@@ -91,8 +91,7 @@ struct FileData
         return values[index];
     }
 
-    constexpr std::size_t
-    to_index(const Position &pos)
+    constexpr std::size_t to_index(const Position &pos)
     {
         return pos.row * cols + pos.col;
     }
@@ -109,30 +108,34 @@ std::optional<Position> parse_excel_fmt(const std::string_view value)
 
     auto letters = value.substr(0, pos);
     // Convert all letters to lowercase
-    auto toLower = [](auto l)
-    { return std::tolower(static_cast<unsigned char>(l)); };
+    auto toLower = [](auto l) { return std::tolower(static_cast<unsigned char>(l)); };
 
     std::size_t numberLetters = letters.size();
     std::size_t col = 0;
-    for (const auto l : letters | std::views::transform(toLower))
+
+        for (auto l : letters | std::views::transform(toLower))
+    {
+        col += (l - 'a') * static_cast<int>(std::pow(26, numberLetters - 1));
+        --numberLetters;
+    }
+
+    // Not correct!
+    /*for (const auto l : letters | std::views::transform(toLower))
     {
         col += (l - 'a') + ((numberLetters - 1) * 26);
         --numberLetters;
-    }
+    }*/
 
     auto numbers = value.substr(pos);
     auto numb = parse_number_positive(numbers);
     if (std::holds_alternative<int>(numb))
     {
-        return {
-            {static_cast<std::size_t>(std::get<int>(numb)),
-             static_cast<std::size_t>(col)}};
+        return {{static_cast<std::size_t>(std::get<int>(numb)), static_cast<std::size_t>(col)}};
     }
     return {};
 }
 
-std::optional<Position>
-parse_comma_fmt(const std::string_view value)
+std::optional<Position> parse_comma_fmt(const std::string_view value)
 {
     auto pos = value.find_first_of(",");
     auto colText = value.substr(0, pos);
@@ -149,14 +152,12 @@ parse_comma_fmt(const std::string_view value)
 
     if (std::holds_alternative<int>(varCol) && std::holds_alternative<int>(varRow))
     {
-        return {{static_cast<std::size_t>(std::get<int>(varRow)),
-                 static_cast<std::size_t>(std::get<int>(varCol))}};
+        return {{static_cast<std::size_t>(std::get<int>(varRow)), static_cast<std::size_t>(std::get<int>(varCol))}};
     }
     return {};
 }
 
-std::optional<Position>
-parse_row_col_format(const std::string_view value)
+std::optional<Position> parse_row_col_format(const std::string_view value)
 {
     // Check the format
     auto pos = value.find_first_of(",");
@@ -281,11 +282,12 @@ void non_interactive_mode(FileData &board, const std::vector<std::string> &guess
             auto val = board.at(decoded.value());
             if (val)
             {
-                std::cout << val.value() << " ";
+
+                std::cout << std::format("{} = {} ", guess, val.value());
             }
             else
             {
-                std::cout << "OOB" << " ";
+                std::cout << std::format("{} = OOB ", guess);
             }
         }
     }
@@ -294,13 +296,9 @@ void non_interactive_mode(FileData &board, const std::vector<std::string> &guess
 void interactive_mode(FileData &board, const std::filesystem::path &filename)
 {
     using std::cout;
-    auto show_banner = [](const std::string_view sview)
-    {
-        cout << std::format("{:-^60}", sview) << '\n';
-    };
+    auto show_banner = [](const std::string_view sview) { cout << std::format("{:-^60}", sview) << '\n'; };
 
-    auto show_help = []()
-    {
+    auto show_help = []() {
         const char e = '\n';
         cout << "Commands:" << e;
         cout << "quit -> quits the program" << e;
@@ -508,8 +506,7 @@ int main(int argc, char *argv[])
 
     if (not result)
     {
-        std::cout << "Usage:\n"
-                  << usage_lines(cli, "challenge01");
+        std::cout << "Usage:\n" << usage_lines(cli, "challenge01");
         return 0;
     }
 
@@ -523,9 +520,12 @@ int main(int argc, char *argv[])
     if (runAutomated)
     {
         non_interactive_mode(board.value(), guesses);
+        std::flush(std::cout);
+        return 0;
     }
     else
     {
         interactive_mode(board.value(), filename);
+        return 0;
     }
 }
