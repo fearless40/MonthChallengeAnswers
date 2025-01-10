@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2...3.8)
+cmake_minimum_required(VERSION 3.4...3.8)
 
 
 ### Require out-of-source builds
@@ -28,4 +28,5 @@ endif()
 
 add_subdirectory(external)
 add_subdirectory(Challenge01)
+
 

@@ -19,3 +19,6 @@ install( TARGETS challenge01
     DESTINATION ${CMAKE_INSTALL_BINDIR}/Debug/Challenge01
 )
 
+
+
+add_subdirectory(v2)
