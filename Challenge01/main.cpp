@@ -113,7 +113,7 @@ std::optional<Position> parse_excel_fmt(const std::string_view value)
     std::size_t numberLetters = letters.size();
     std::size_t col = 0;
 
-        for (auto l : letters | std::views::transform(toLower))
+    for (auto l : letters | std::views::transform(toLower))
     {
         col += (l - 'a') * static_cast<int>(std::pow(26, numberLetters - 1));
         --numberLetters;
