@@ -8,12 +8,12 @@ add_executable( challenge01v1
 include(GNUInstallDirs)
 install( TARGETS challenge01v1
          CONFIGURATIONS Release
-         DESTINATION ${CMAKE_INSTALL_BINDIR}/Challenge01v1
+         DESTINATION ${CMAKE_INSTALL_BINDIR}/Challenge01
          )
 
 install( TARGETS challenge01v1
     CONFIGURATIONS Debug
-    DESTINATION ${CMAKE_INSTALL_BINDIR}/Debug/Challenge01v1
+    DESTINATION ${CMAKE_INSTALL_BINDIR}/Debug/Challenge01
 )
 
 

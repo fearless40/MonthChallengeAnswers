@@ -1,17 +1,19 @@
 #pragma once
 
-#include <vector>
+#include <optional>
 #include <string>
 #include <string_view>
-#include <optional>
+#include <vector>
 
-struct CommandLineOptions {
-    bool interactive {false};
-    bool verbose {false};
-    bool nomem {false};
-    std::string fileToParse {};
+struct CommandLineOptions
+{
+    bool interactive{false};
+    bool verbose{false};
+    bool nomem{false};
+    std::string fileToParse{};
     std::vector<std::string> queries;
-
 };
 
-std::optional<CommandLineOptions> parse(int argc, char const * argv[]);
+std::optional<CommandLineOptions> parse(int argc, char const *argv[]);
+
+const CommandLineOptions &get_program_options();

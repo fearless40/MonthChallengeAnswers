@@ -113,17 +113,17 @@ constexpr std::string color_rgb_fore_back(int r, int g, int b, bool fore = true)
     return std::string(buff);
 }
 
-constexpr std::string color_rgb(int r, int g, int b)
+constexpr std::string fcolor_rgb(int r, int g, int b)
 {
     return color_rgb_fore_back(r, g, b, true);
 }
 
-constexpr std::string color_rgb_back(int r, int g, int b)
+constexpr std::string bcolor_rgb(int r, int g, int b)
 {
     return color_rgb_fore_back(r, g, b, false);
 }
 
-constexpr const char *term_fcolor(Color c)
+constexpr const char *fcolor(Color c)
 {
     return Forecolor::colors[static_cast<size_t>(c)];
 }
