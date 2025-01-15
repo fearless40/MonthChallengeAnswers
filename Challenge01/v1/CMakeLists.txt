@@ -4,7 +4,7 @@ add_executable( challenge01v1
 
 target_link_libraries( challenge01v1 clipp )
 target_include_directories( challenge01v1
-	PRIVATE ${CMAKE_SOURCE_DIR}/extern/clipp/include
+	PRIVATE ${CMAKE_SOURCE_DIR}/external/clipp/include
 )
 
 

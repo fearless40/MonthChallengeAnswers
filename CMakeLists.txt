@@ -29,6 +29,7 @@ endif()
 
 add_subdirectory(external)
 add_subdirectory(Challenge01)
+add_subdirectory(Challenge02)
 add_subdirectory(lib)
 
 
