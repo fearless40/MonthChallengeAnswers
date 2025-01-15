@@ -1,4 +1,4 @@
-#include "..\external\clipp\include\clipp.h"
+#include "clipp.h"
 #include <algorithm>
 #include <charconv>
 #include <filesystem>
