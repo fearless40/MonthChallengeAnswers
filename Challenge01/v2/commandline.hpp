@@ -14,6 +14,8 @@ struct CommandLineOptions
     std::vector<std::string> queries;
 };
 
+namespace commandline
+{
 std::optional<CommandLineOptions> parse(int argc, char const *argv[]);
-
 const CommandLineOptions &get_program_options();
+} // namespace commandline

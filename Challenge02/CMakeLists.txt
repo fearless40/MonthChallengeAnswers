@@ -1,12 +1,13 @@
 add_executable(challenge02 
     src/main.cpp
+    src/commandline.cpp
 )
 
 target_include_directories( challenge02 
- PRIVATE include
+ PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} include
 )
 
 target_link_libraries(  challenge02
     PRIVATE challenges
-    INTERFACE clipp
+    PRIVATE clipp
     )

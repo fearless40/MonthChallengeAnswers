@@ -1,14 +1,14 @@
 #include "RowCol.hpp"
 #include "RandomUtil.hpp"
+#include "baseconv.hpp"
 #include <algorithm>
 #include <charconv>
 #include <ranges>
 #include <utility>
-#include "base26.hpp"
 
 std::string RowCol::as_base26_fmt() const
 {
-    std::string result{ base26::to( col )};
+    std::string result{base26::to_string(col)};
     result.append(std::to_string(row));
     return result;
 }
@@ -51,22 +51,22 @@ RowCol parse_comma_fmt(const std::string_view value)
     return {};
 }
 
-
 /**
  * @brief Converts a trimmed string (no whitespace allowed base26 or col,row format)
- * @param value all whitespace must be trimmed otherwise evalutes to error 
+ * @param value all whitespace must be trimmed otherwise evalutes to error
  * @return RowCol object initalized with value
  */
 RowCol RowCol::from_string(std::string_view const value)
 {
-    if( value.size() < 2 )
+    if (value.size() < 2)
         return {};
 
-    if( value[0] <= '9' and value[0] >= '0' ) {
+    if (value[0] <= '9' and value[0] >= '0')
+    {
         // Assume comma format
         return parse_comma_fmt(value);
     }
-    
+
     auto pos = value.find_first_of("0123456789");
     if (pos == std::string_view::npos)
     {
@@ -74,11 +74,11 @@ RowCol RowCol::from_string(std::string_view const value)
     }
 
     auto letters = value.substr(0, pos);
-    
+
     RowCol ret;
     if (from_chars(value.substr(pos), ret.row))
     {
-        ret.col = static_cast<std::uint16_t>(base26::from(letters));
+        ret.col = static_cast<std::uint16_t>(base26::from_string(letters));
         return ret;
     }
 
