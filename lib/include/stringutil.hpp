@@ -60,6 +60,14 @@ char *match_lcase_letters(char *next)
     }
     return ret;
 }
+
+constexpr char *match_char(char *next, char letter)
+{
+    char *ret = next;
+    if (*ret == letter)
+        return ++ret;
+}
+
 } // namespace parser
 
 } // namespace util

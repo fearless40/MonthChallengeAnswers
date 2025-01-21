@@ -1,6 +1,7 @@
 add_executable(challenge02 
     src/main.cpp
     src/commandline.cpp
+    src/createmode.cpp
 )
 
 target_include_directories( challenge02 

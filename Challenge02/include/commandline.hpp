@@ -3,6 +3,9 @@
 #include <string>
 #include <vector>
 
+namespace commandline
+{
+
 enum class RunMode
 {
     Verify,
@@ -30,8 +33,6 @@ struct ProgramOptions
     std::vector<Players> players;
 };
 
-namespace commandline
-{
 ProgramOptions parse(int argc, char *argv[]);
 const ProgramOptions &get_program_options();
 } // namespace commandline
