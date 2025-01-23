@@ -6,6 +6,15 @@
 
 const size_t BUFFER_SIZE = 4096;
 
+char skip_ws(std::ifstream &file)
+{
+    char c = file.get();
+    while (c == ' ' || c == '\t' || c == '\v')
+        c = file.get();
+
+    return c;
+}
+
 std::vector<Ship> read_ship_data(std::ifstream &file, ErrorReport &error, int rowSize, int colSize)
 {
     int rowCount = 0;
@@ -16,7 +25,8 @@ std::vector<Ship> read_ship_data(std::ifstream &file, ErrorReport &error, int ro
     {
         int mapValue;
         file >> mapValue;
-        // std::cout << "Read: " << mapValue << '\n';
+
+        std::cout << "Read: " << mapValue << '\n';
         /*if (!file)
         {
             error("Unable to read value in file data.");
@@ -29,16 +39,8 @@ std::vector<Ship> read_ship_data(std::ifstream &file, ErrorReport &error, int ro
             if (it != ships.end())
             {
                 auto &loc = (*it).location;
-
-                /*if (loc.x == UNSET)
-                    loc.x = colCount;
-                else*/
-                loc.x2 = colCount; // std::max(colCount, loc.x);
-
-                /*if (loc.y == UNSET)
-                    loc.y = rowCount;
-                else*/
-                loc.y2 = rowCount; // std::max(rowCount, loc.y);
+                loc.x2 = colCount;
+                loc.y2 = rowCount;
             }
             else
             {
@@ -47,17 +49,37 @@ std::vector<Ship> read_ship_data(std::ifstream &file, ErrorReport &error, int ro
             }
         }
 
+        if (char c = file.get(); c == ',')
+        {
+            ++colCount;
+        }
+        else
+        {
+            c = skip_ws(file);
+            if (c == ',')
+                ++colCount;
+        }
+
+        /*if (file.peek() != ',')
+        {
+            char c;
+            do
+            {
+                c = (char)file.get();
+            } while (c == ' ' || c == '\t' || c == '\v');
+            file.seekg(-1, std::ios_base::cur);
+        }
+
         if (file.peek() == ',')
         {
             file.seekg(1, std::ios_base::cur);
-            ++colCount;
-        }
+        }*/
 
         if (file.peek() == '\n' || file.peek() == '\r')
         {
             if (colCount != colSize - 1 || colCount == 0)
             {
-                error(std::format("Found only this many cols: {} out of {}", colCount, colSize));
+                error(std::format("Found only this many cols: {} out of {}", colCount + 1, colSize));
                 return {};
             }
 
@@ -69,7 +91,7 @@ std::vector<Ship> read_ship_data(std::ifstream &file, ErrorReport &error, int ro
 
     if (rowCount != rowSize)
     {
-        error(std::format("Found only this many rows: {} out of {}", rowCount, rowSize));
+        error(std::format("Found only this many rows: {} out of {}", rowCount + 1, rowSize));
         return {};
     }
 
