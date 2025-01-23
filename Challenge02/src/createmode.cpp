@@ -4,4 +4,5 @@
 int run_command_mode_create(const commandline::ProgramOptions &opt)
 {
     Game game;
+    return 0;
 }
