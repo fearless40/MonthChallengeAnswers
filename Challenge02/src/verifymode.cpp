@@ -30,5 +30,14 @@ int run_command_mode_verify(const commandline::ProgramOptions &opt)
         }
     }
 
+    if (g.is_game_valid())
+    {
+        std::cout << "Passed: No errors detected.\n";
+    }
+    else
+    {
+        std::cout << "Failed: Errors detected.\n";
+    }
+
     return 0;
 }

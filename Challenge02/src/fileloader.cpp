@@ -6,13 +6,14 @@
 
 const size_t BUFFER_SIZE = 4096;
 
-char skip_ws(std::ifstream &file)
+void skip_ws(std::ifstream &file)
 {
-    char c = file.get();
+    char c = file.peek();
     while (c == ' ' || c == '\t' || c == '\v')
-        c = file.get();
-
-    return c;
+    {
+        file.get();
+        c = file.peek();
+    }
 }
 
 std::vector<Ship> read_ship_data(std::ifstream &file, ErrorReport &error, int rowSize, int colSize)
@@ -26,12 +27,11 @@ std::vector<Ship> read_ship_data(std::ifstream &file, ErrorReport &error, int ro
         int mapValue;
         file >> mapValue;
 
-        std::cout << "Read: " << mapValue << '\n';
-        /*if (!file)
+        if (file.fail())
         {
             error("Unable to read value in file data.");
             return {};
-        }*/
+        }
 
         if (mapValue > 0)
         {
@@ -49,33 +49,14 @@ std::vector<Ship> read_ship_data(std::ifstream &file, ErrorReport &error, int ro
             }
         }
 
-        if (char c = file.get(); c == ',')
+        skip_ws(file);
+
+        if (char c = file.peek(); c == ',')
         {
             ++colCount;
+            file.get();
         }
-        else
-        {
-            c = skip_ws(file);
-            if (c == ',')
-                ++colCount;
-        }
-
-        /*if (file.peek() != ',')
-        {
-            char c;
-            do
-            {
-                c = (char)file.get();
-            } while (c == ' ' || c == '\t' || c == '\v');
-            file.seekg(-1, std::ios_base::cur);
-        }
-
-        if (file.peek() == ',')
-        {
-            file.seekg(1, std::ios_base::cur);
-        }*/
-
-        if (file.peek() == '\n' || file.peek() == '\r')
+        else if (c == '\n' || c == '\r')
         {
             if (colCount != colSize - 1 || colCount == 0)
             {
@@ -107,7 +88,6 @@ Game load_from_file(std::filesystem::path filename, ErrorReport &error)
     }
 
     std::ifstream file{filename};
-    // char buff[BUFFER_SIZE];
 
     unsigned int rowCount = 0;
     unsigned int colCount = 0;
@@ -132,7 +112,6 @@ Game load_from_file(std::filesystem::path filename, ErrorReport &error)
             error("Unable to read player name");
             return {};
         }
-        std::cout << "Reading player: " << playerName << '\n';
 
         ret.players.emplace_back(playerId, playerName);
         auto &player = ret.players.back();
@@ -141,12 +120,4 @@ Game load_from_file(std::filesystem::path filename, ErrorReport &error)
     }
 
     return ret;
-    /*while (!file.eof())
-    {
-        file.read(buff, BUFFER_SIZE);
-        auto charsRead = file.gcount();
-        const std::string_view file_data(buff, charsRead < BUFFER_SIZE ? charsRead : BUFFER_SIZE);
-
-
-    }*/
 }

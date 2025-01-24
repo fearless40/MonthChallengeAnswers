@@ -51,8 +51,8 @@ struct Game
 {
     uint16_t rows;
     uint16_t cols;
-    int minShipSize;
-    int maxShipSize;
+    uint32_t minShipSize;
+    uint32_t maxShipSize;
     std::vector<Player> players;
 
     constexpr static bool valid_row_col(uint16_t row, uint16_t col)
@@ -64,5 +64,20 @@ struct Game
     constexpr bool valid_pos(RowCol pos) const noexcept
     {
         return (pos.row >= 0 and pos.row <= rows) and (pos.col >= 0 and pos.col <= cols);
+    }
+
+    constexpr bool is_game_valid()
+    {
+        for (auto &player : players)
+        {
+            for (auto &ship : player.ships)
+            {
+                if (!ship.is_valid())
+                    return false;
+                if (ship.shiplength > maxShipSize || ship.shiplength < minShipSize)
+                    return false;
+            }
+        }
+        return true;
     }
 };
