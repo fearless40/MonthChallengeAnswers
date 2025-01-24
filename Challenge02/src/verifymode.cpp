@@ -8,11 +8,7 @@ int run_command_mode_verify(const commandline::ProgramOptions &opt)
 {
     ErrorReport errs;
     Game g = load_from_file(opt.filename, errs);
-    if (errs)
-    {
-        std::ranges::for_each(errs.errors,
-                              [](const std::string &str) { std::cout << std::format("ERROR: {} \n", str); });
-    }
+    
 
     for (auto &p : g.players)
     {
@@ -30,13 +26,19 @@ int run_command_mode_verify(const commandline::ProgramOptions &opt)
         }
     }
 
-    if (g.is_game_valid())
+    if (g.report_game_is_valid(errs))
     {
         std::cout << "Passed: No errors detected.\n";
     }
     else
     {
         std::cout << "Failed: Errors detected.\n";
+    }
+
+    if (errs)
+    {
+        std::ranges::for_each(errs.errors,
+                              [](const std::string &str) { std::cout << std::format("ERROR: {} \n", str); });
     }
 
     return 0;

@@ -4,6 +4,7 @@ add_executable(challenge02
     src/createmode.cpp
     src/verifymode.cpp
     src/fileloader.cpp
+    src/game.cpp
 )
 
 target_include_directories( challenge02 

@@ -3,6 +3,7 @@
 #include <collisions.hpp>
 #include <string>
 #include <vector>
+#include "error.hpp"
 
 enum class Orientation
 {
@@ -24,20 +25,22 @@ struct Ship
         return Orientation::Vertical;
     }
 
-    constexpr int row_size()
+    constexpr int row_size() const noexcept
     {
         return location.x2 - location.x;
     }
 
-    constexpr int col_size()
+    constexpr int col_size() const noexcept
     {
         return location.y2 - location.y;
     }
 
-    constexpr bool is_valid()
+    constexpr bool is_valid() const noexcept
     {
         return (row_size() == 0 && col_size() == shiplength - 1) || (row_size() == shiplength - 1 && col_size() == 0);
     }
+
+    constexpr uint32_t id() const noexcept { return shiplength;}
 };
 
 struct Player
@@ -66,18 +69,6 @@ struct Game
         return (pos.row >= 0 and pos.row <= rows) and (pos.col >= 0 and pos.col <= cols);
     }
 
-    constexpr bool is_game_valid()
-    {
-        for (auto &player : players)
-        {
-            for (auto &ship : player.ships)
-            {
-                if (!ship.is_valid())
-                    return false;
-                if (ship.shiplength > maxShipSize || ship.shiplength < minShipSize)
-                    return false;
-            }
-        }
-        return true;
-    }
+    bool report_game_is_valid(ErrorReport & report) const noexcept;
+    
 };
