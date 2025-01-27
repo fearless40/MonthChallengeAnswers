@@ -113,11 +113,11 @@ Game load_from_file(std::filesystem::path filename, ErrorReport &error)
             return {};
         }
 
-        ret.players.emplace_back(playerId, playerName);
+        ret.players.emplace_back((uint32_t)playerId, playerName);
         auto &player = ret.players.back();
 
         player.ships = read_ship_data(file, error, ret.rows, ret.cols);
     }
 
-    return ret;
+        return ret;
 }

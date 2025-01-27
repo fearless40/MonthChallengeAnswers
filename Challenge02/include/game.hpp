@@ -1,9 +1,10 @@
 #pragma once
 #include "RowCol.hpp"
+#include "error.hpp"
 #include <collisions.hpp>
+#include <optional>
 #include <string>
 #include <vector>
-#include "error.hpp"
 
 enum class Orientation
 {
@@ -12,6 +13,9 @@ enum class Orientation
 };
 
 const int UNSET = -1;
+
+struct Game;
+struct Player;
 
 struct Ship
 {
@@ -40,7 +44,10 @@ struct Ship
         return (row_size() == 0 && col_size() == shiplength - 1) || (row_size() == shiplength - 1 && col_size() == 0);
     }
 
-    constexpr uint32_t id() const noexcept { return shiplength;}
+    constexpr uint32_t id() const noexcept
+    {
+        return shiplength;
+    }
 };
 
 struct Player
@@ -48,6 +55,25 @@ struct Player
     uint32_t id;
     std::string name;
     std::vector<Ship> ships;
+
+    constexpr bool check_if_position_collides(AABB position)
+    {
+        for (auto &ship : ships)
+        {
+            if (aabb_collision(position, ship.location))
+                return true;
+        }
+        return false;
+    }
+
+    constexpr bool any_collisions()
+    {
+        return any_collision(ships, [](auto &ship) { return ship.location; });
+    }
+
+    std::optional<Ship> ship_at_position(uint16_t row, uint16_t col) const;
+
+    bool generate_random_ships(Game const &game, ErrorReport &report);
 };
 
 struct Game
@@ -69,6 +95,8 @@ struct Game
         return (pos.row >= 0 and pos.row <= rows) and (pos.col >= 0 and pos.col <= cols);
     }
 
-    bool report_game_is_valid(ErrorReport & report) const noexcept;
-    
+    bool report_game_is_valid(ErrorReport &report) const noexcept;
 };
+
+void print_player(Game const &, Player const &);
+void print_game(Game const &g);

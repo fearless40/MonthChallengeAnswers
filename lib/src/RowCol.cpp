@@ -3,6 +3,7 @@
 #include "baseconv.hpp"
 #include <algorithm>
 #include <charconv>
+#include <format>
 #include <ranges>
 #include <utility>
 
@@ -20,7 +21,7 @@ std::string RowCol::as_colrow_fmt() const
 
 RowCol RowCol::random(std::uint16_t maxRow, std::uint16_t maxCol)
 {
-    return {Random::between<std::uint16_t>(0, maxRow), Random::between<std::uint16_t>(0, maxCol)};
+    return {random::between<std::uint16_t>(0, maxRow), random::between<std::uint16_t>(0, maxCol)};
 }
 
 bool from_chars(std::string_view const value, std::uint16_t &out)

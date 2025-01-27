@@ -21,12 +21,13 @@ ProgramOptions parse(int argc, char *argv[])
          (option("--ships") & value("Smallest ship", opt.ship_smallest) % "Smallest ship in the game" &
           value("Largest ship", opt.ship_largest) % "Largest ship in the game"),
          (repeatable((option("--player") &
-                      value("player name").call([&](const char *input) { opt.players.push_back({input}); }))),
-          option("--random").call([&]() { opt.players.back().isRandom = true; }) |
-              (option("--place") &
-               repeatable(
-                   value(match::prefix_not("--"), "Position string: shipId:ColRow:Orientation")
-                       .call([&](const std::string &text) { opt.players.back().placements.push_back(text); })))));
+                      value("player name").call([&](const char *input) { opt.players.push_back({input}); })),
+                     option("--random").call([&]() { opt.players.back().isRandom = true; }) |
+                         (option("--place") &
+                          repeatable(value(match::prefix_not("--"), "Position string: shipId:ColRow:Orientation")
+                                         .call([&](const std::string &text) {
+                                             opt.players.back().placements.push_back(text);
+                                         }))))));
 
     auto displayCli = (clipp::command("display"));
 
