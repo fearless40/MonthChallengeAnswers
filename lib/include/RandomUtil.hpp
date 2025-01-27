@@ -1,7 +1,7 @@
 #pragma once
 #include <random>
 
-namespace Random
+namespace random
 {
 
 inline static std::random_device randomDevice;
@@ -19,4 +19,4 @@ template <typename T> auto between(T min, T max) -> T
     return r(randomGen);
 }
 
-} // namespace Random
+} // namespace random
