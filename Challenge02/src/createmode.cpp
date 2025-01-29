@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <createmode.hpp>
+#include <format>
 #include <game.hpp>
 #include <iostream>
 
@@ -12,7 +13,7 @@ int run_command_mode_create(const commandline::ProgramOptions &opt)
     game.minShipSize = opt.ship_smallest;
     game.maxShipSize = opt.ship_largest;
 
-    size_t playerId = 0;
+        size_t playerId = 0;
     for (auto &cPlayer : opt.players)
     {
         Player p;
@@ -26,6 +27,7 @@ int run_command_mode_create(const commandline::ProgramOptions &opt)
     }
 
     print_game(game);
+    game.report_game_is_valid(report);
     print_player(game, game.players.front());
 
     if (report)

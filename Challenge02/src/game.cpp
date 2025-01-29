@@ -25,19 +25,19 @@ bool Player::generate_random_ships(Game const &game, ErrorReport &report)
     {
 
         auto const size_vector = ships.size();
-        for (size_t count_attempts = 0; count_attempts < 10000; ++count_attempts)
+        for (size_t count_attempts = 0; count_attempts < 1000; ++count_attempts)
         {
             Orientation layout = random::coin_flip() == true ? Orientation::Horizontal : Orientation::Vertical;
-            uint16_t width = (layout == Orientation::Vertical ? 0 : ship_id);
-            uint16_t height = (layout == Orientation::Horizontal ? 0 : ship_id);
+            uint16_t width = (layout == Orientation::Vertical ? 0 : ship_id - 1);
+            uint16_t height = (layout == Orientation::Horizontal ? 0 : ship_id - 1);
 
-            int row = random::between(0, game.rows - height);
-            int col = random::between(0, game.cols - width);
+            int row = random::between(0, game.rows - 1 - height);
+            int col = random::between(0, game.cols - 1 - width);
             AABB position{col, row, col + width, row + height};
             if (!check_if_position_collides(position))
             {
                 ships.emplace_back(ship_id, position);
-                report(std::format("Player {} generated: {} after {} tries", name, ship_id, count_attempts));
+                // report(std::format("Player {} generated: {} after {} tries", name, ship_id, count_attempts));
                 break;
             }
             else
@@ -47,8 +47,7 @@ bool Player::generate_random_ships(Game const &game, ErrorReport &report)
         }
         if (ships.size() == size_vector)
         {
-            // std::cout << name << " could not generate: " << ship_id << '\n';
-            report(std::format("Player {} could not generate: {} after {} tries", name, ship_id, 10000));
+            report(std::format("Player {} could not generate: {} after {} tries", name, ship_id, 1000));
             return false;
         }
     }
@@ -75,8 +74,8 @@ bool Game::report_game_is_valid(ErrorReport &report) const noexcept
             }
 
             if (std::ranges::any_of(shipit + 1, player.ships.end(), [&](auto &next_ship) {
-                    std::cout << std::format("{}'s comparing {} to {} collides = {}\n", player.name, ship.id(),
-                                             next_ship.id(), aabb_collision(ship.location, next_ship.location));
+                    /*std::cout << std::format("{}'s comparing {} to {} collides = {}\n", player.name, ship.id(),
+                                             next_ship.id(), aabb_collision(ship.location, next_ship.location));*/
 
                     if (aabb_collision(ship.location, next_ship.location))
                     {

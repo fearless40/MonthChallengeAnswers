@@ -48,6 +48,13 @@ ProgramOptions parse(int argc, char *argv[])
         return {};
     }
 
+    // Verify the options are correct before returning
+    if (opt.ship_smallest < 0 || opt.ship_largest > opt.rows || opt.ship_largest > opt.cols)
+    {
+        std::cout << "ERROR: Invalid defaults. Ships too small or ships too large.\n";
+        exit(-1);
+    }
+
     return opt;
     // Validate the files before continuing.
 
