@@ -4,6 +4,10 @@
 #include <game.hpp>
 #include <iostream>
 
+std::optional<Ship> parse_ship(std::string_view str)
+{
+}
+
 int run_command_mode_create(const commandline::ProgramOptions &opt)
 {
     ErrorReport report;
@@ -13,7 +17,7 @@ int run_command_mode_create(const commandline::ProgramOptions &opt)
     game.minShipSize = opt.ship_smallest;
     game.maxShipSize = opt.ship_largest;
 
-        size_t playerId = 0;
+    size_t playerId = 0;
     for (auto &cPlayer : opt.players)
     {
         Player p;
