@@ -1,12 +1,23 @@
 
 #include "commandline.hpp"
 #include "createmode.hpp"
+#include "parser.hpp"
 #include "verifymode.hpp"
 #include <iostream>
 
 int main(int argc, char *argv[])
 {
-    auto opt = commandline::parse(argc, argv);
+
+    int value = 0;
+    auto caller_me = [](std::string_view view) -> void { std::cout << "From call back: " << view << '\n'; };
+    std::string_view letters;
+    auto digit = parser::int_parser<int>()[caller_me] >> parser::letter_parser(letters);
+    std::string_view test = "123   abc";
+    parser::parse(test, digit, parser::white_space_not_endl{});
+    std::cout << '\n' << "Found: " << value << " and " << letters << '\n';
+
+    return 0;
+    /*auto opt = commandline::parse(argc, argv);
 
     switch (opt.mode)
     {
@@ -15,5 +26,5 @@ int main(int argc, char *argv[])
 
     case commandline::RunMode::Verify:
         return run_command_mode_verify(opt);
-    }
+    }*/
 }

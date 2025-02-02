@@ -6,6 +6,7 @@
 
 std::optional<Ship> parse_ship(std::string_view str)
 {
+    return {};
 }
 
 int run_command_mode_create(const commandline::ProgramOptions &opt)
