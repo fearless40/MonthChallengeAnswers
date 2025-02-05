@@ -18,11 +18,37 @@ struct parser_tag
 {
 };
 
-template <class T, class Begin_t, class End_t, class wskip_t>
-concept ParserStruct = requires(T a, Begin_t begin, End_t end, wskip_t wskip) {
-    typename T::parser_tag;
-    { a.parse(begin, end, wskip) } -> std::convertible_to<bool>;
+template <class T>
+concept is_parser = std::same_as<typename std::remove_cvref_t<T>::parser_tag, parser_tag>;
+
+template <class T, class Begin_t, class End_t>
+concept CanBeInitalizedByTwoiterators = requires(T a, Begin_t b, End_t e) {
+    { T{b, e} } -> std::same_as<T>;
 };
+
+namespace attributes
+{
+
+template <class... T> using Attributes = std::tuple<T...>;
+
+template <typename T>
+concept has_attributes = T::attributes;
+
+struct ws_never
+{
+};
+
+struct ws_always
+{
+};
+
+template <typename Attrib_t>
+concept never_calls_ws = requires(Attrib_t attrib) {
+    { attrib.attributes };
+    { std::get<ws_never>(attrib.attributes) } -> std::convertible_to<ws_never>;
+};
+
+} // namespace attributes
 
 template <class T>
 concept CharIterator = requires(T a) {
@@ -36,73 +62,77 @@ constexpr char to_lower(char c)
     return c;
 }
 
+namespace matchers
+{
+
 constexpr bool matched(std::forward_iterator auto begin_match, auto end_match)
 {
     return begin_match == end_match;
 }
 
-template <CharIterator begin_t, typename end_t> constexpr begin_t match_white_space(begin_t &begin, end_t &end)
+template <CharIterator begin_t, typename end_t> constexpr bool match_white_space(begin_t &begin, end_t &end)
 {
+    bool matched = false;
     while (begin != end && (*begin == '\0' || *begin == ' ' || *begin == '\t' || *begin == '\n'))
     {
         ++begin;
+        matched = true;
     }
-    return begin;
+    return matched;
 }
 
-template <CharIterator begin_t, typename end_t>
-constexpr begin_t &match_white_space_not_endl(begin_t &begin, end_t &end)
+template <CharIterator begin_t, typename end_t> constexpr bool &match_white_space_not_endl(begin_t &begin, end_t &end)
 {
+    bool matched = false;
     while (begin != end && (*begin == '\0' || *begin == ' ' || *begin == '\t'))
     {
         ++begin;
+        matched = true;
     }
-    return begin;
+    return matched;
 }
 
-template <CharIterator begin_t, typename end_t> constexpr begin_t &match_numbers(begin_t &begin, end_t &end)
+template <CharIterator begin_t, typename end_t> constexpr bool &match_numbers(begin_t &begin, end_t &end)
 {
-    std::cout << "\nNumbers: ";
+    bool matched = false;
     while (begin != end && *begin >= '0' && *begin <= '9')
     {
-        std::cout << *begin;
         ++begin;
+        matched = true;
     }
 
-    return begin;
+    return matched;
 }
 
-template <CharIterator begin_t, typename end_t> constexpr begin_t &match_lcase_letters(begin_t &begin, end_t &end)
+template <CharIterator begin_t, typename end_t> constexpr bool &match_lcase_letters(begin_t &begin, end_t &end)
 {
-
+    bool matched = false;
     while (begin != end && (to_lower(*begin) >= 'a' && to_lower(*begin) <= 'z'))
+    {
         ++begin;
+        matched = true;
+    }
 
-    return begin;
+    return matched;
 }
 
 template <CharIterator begin_t, typename end_t> constexpr begin_t &match_char(begin_t begin, end_t end, char letter)
 {
     if (*begin == letter)
+    {
         ++begin;
-    return begin;
+        return true;
+    }
+    return false;
 }
+
+} // namespace matchers
 } // namespace detail
-
-/*
-Example:
-std::string large_string = ".....";
-int value;
-int row;
-int col;
-auto parse_int = int_parser(value) >> ':' >> letters([col](std::string_view str) { col = base_26convert(str) }) >> row
->> letters() ; parse( large_string, parse_int, whitespace_skipper) large_string >> repeat(value >> ',' >> ws , 8) >> ws
->> large_string >> value(&value, error) >> white_space >> value
-
-*/
 
 struct empty
 {
+    using parser_tag = detail::parser_tag;
+    using attributes = detail::attributes::Attributes<detail::attributes::ws_never>;
     template <class begin_t, class end_t, class wskip_t>
     constexpr bool parse(begin_t &begin, end_t &end, wskip_t ws) const noexcept
     {
@@ -113,27 +143,40 @@ struct empty
 struct white_space_not_endl
 {
     using parser_tag = detail::parser_tag;
+    using attributes = detail::attributes::Attributes<detail::attributes::ws_always>;
 
     template <class begin_t, class end_t, class wskip_t = empty>
     constexpr bool parse(begin_t &begin, end_t &end, wskip_t skip = empty{})
     {
-        detail::match_white_space_not_endl(begin, end);
-        return true;
+        return detail::matchers::match_white_space_not_endl(begin, end);
     }
 };
 
 template <typename p1_t, typename p2_t> struct follows
 {
-    p1_t p1;
-    p2_t p2;
+    std::remove_cv_t<p1_t> p1;
+    std::remove_cv_t<p2_t> p2;
 
     using parser_tag = detail::parser_tag;
-    follows(p1_t parse1, p2_t parse2) : p1(parse1), p2(parse2) {};
 
-    template <class begin_t, class end_t, class wskip_t> constexpr bool parse(begin_t &begin, end_t &end, wskip_t ws)
+    constexpr follows(p1_t parse1, p2_t parse2) : p1(parse1), p2(parse2) {};
+
+    template <class begin_t, class end_t, class wskip_t>
+    constexpr bool parse(begin_t &begin, end_t &end, wskip_t ws) const noexcept
     {
+        if constexpr (detail::attributes::never_calls_ws<p1_t>)
+        {
+            ws.parse(begin, end, ws);
+        }
+
         if (p1.parse(begin, end, ws))
+        {
+            if constexpr (detail::attributes::never_calls_ws<p2_t>)
+            {
+                ws.parse(begin, end, ws);
+            }
             return p2.parse(begin, end, ws);
+        }
         return false;
     }
 };
@@ -149,7 +192,8 @@ template <typename invokable_t, typename parser_t> struct action_invoke
     {
     }
 
-    template <class begin_t, class end_t, class wskip_t> constexpr bool parse(begin_t &begin, end_t &end, wskip_t ws)
+    template <class begin_t, class end_t, class wskip_t>
+    constexpr bool parse(begin_t &begin, end_t &end, wskip_t ws) const noexcept
     {
 
         begin_t start = begin;
@@ -173,7 +217,8 @@ template <typename int_t, typename parser_t> struct action_int_ref
     {
     }
 
-    template <class begin_t, class end_t, class wskip_t> constexpr bool parse(begin_t &begin, end_t &end, wskip_t ws)
+    template <class begin_t, class end_t, class wskip_t>
+    constexpr bool parse(begin_t &begin, end_t &end, wskip_t ws) const noexcept
     {
 
         begin_t start = begin;
@@ -186,26 +231,43 @@ template <typename int_t, typename parser_t> struct action_int_ref
     }
 };
 
+template <typename array_t, typename parser_t> struct action_array_like
+{
+    array_t &value;
+    parser_t parser;
+
+    using parser_tag = detail::parser_tag;
+
+    action_array_like(array_t &val, parser_t &&parser_wrapper) : value(val), parser(parser_wrapper)
+    {
+    }
+
+    template <class begin_t, class end_t, class wskip_t>
+    constexpr bool parse(begin_t &begin, end_t &end, wskip_t ws) const noexcept
+    {
+        begin_t start = begin;
+        if (parser.parse(begin, end, ws))
+        {
+            value = array_t{start, begin};
+            return true;
+        }
+        return false;
+    }
+};
+
 template <typename value_t> struct int_parser
 {
 
     using parser_tag = detail::parser_tag;
+    using attributes = detail::attributes::Attributes<detail::attributes::ws_never>;
     using type = int_parser<value_t>;
 
     template <class begin_t, class end_t, class wskip_t> constexpr bool parse(begin_t &begin, end_t &end, wskip_t ws)
     {
-
-        ws.parse(begin, end);
-        auto start = begin;
-        detail::match_numbers(begin, end);
-
-        if (start != begin)
-            return true;
-
-        return false;
+        return detail::matchers::match_numbers(begin, end);
     }
 
-    template <typename invoke_t> constexpr auto operator[](invoke_t &&invokable)
+    template <typename invoke_t> constexpr auto operator()(invoke_t &&invokable)
     {
         // static_assert(std::is_integral_v<std::remove_cvref_t<invoke_t>>);
         static_assert(std::is_invocable_v<invoke_t, std::string_view>);
@@ -220,52 +282,36 @@ template <typename value_t> struct int_parser
     }
 };
 
-struct letter_parser
+struct letter_parser_ignore_case
 {
 
-    std::string_view &matched;
     using parser_tag = detail::parser_tag;
-
-    letter_parser(std::string_view &view) : matched(view) {};
+    using attributes = detail::attributes::Attributes<detail::attributes::ws_never>;
 
     template <class begin_t, class end_t, class wskip_t> constexpr bool parse(begin_t &begin, end_t &end, wskip_t ws)
     {
+        return detail::matchers::match_lcase_letters(begin, end);
+    }
 
-        ws.parse(begin, end);
-        auto start = begin;
-        detail::match_lcase_letters(begin, end);
-
-        if (start != begin)
+    template <typename invoke_t> constexpr auto operator()(invoke_t &&invokable)
+    {
+        // static_assert(std::is_integral_v<std::remove_cvref_t<invoke_t>>);
+        static_assert(std::is_invocable_v<invoke_t, std::string_view>);
+        if constexpr (detail::CanBeInitalizedByTwoiterators<invoke_t, std::forward_iterator, std::forward_iterator>)
         {
-            matched = std::string_view{start, begin};
-            return true;
+            return action_int_ref(std::forward<invoke_t>(invokable), letter_parser_ignore_case{});
         }
-
-        return false;
+        if constexpr (std::is_invocable_v<invoke_t, std::string_view>)
+        {
+            return action_invoke<invoke_t, letter_parser_ignore_case>(std::forward<invoke_t>(invokable),
+                                                                      letter_parser_ignore_case{});
+        }
     }
 };
 
-/*template <typename parser_t, typename value_t> struct extractor
+template <detail::is_parser p1_t, detail::is_parser p2_t> auto operator>>(p1_t &&p1, p2_t &&p2)
 {
-    parser_t t;
-    value_t &t;
-
-    std::string_view operator()(std::string_view view)
-    {
-        auto ret = t(view);
-        if (matched(view, ret))
-        {
-            if constexpr (std::is_integral<value_t>)
-            {
-                t = base10::from_string({view.begin(), ret.begin()});
-            }
-        }
-    }
-}*/
-
-template <typename p1_t, typename p2_t> auto operator>>(p1_t &&p1, p2_t &&p2)
-{
-    return follows(p1, p2);
+    return follows<p1_t, p2_t>(p1, p2);
 };
 
 template <typename stream_t, typename parser_t, typename wskip_t>
@@ -275,4 +321,12 @@ void parse(stream_t &&stream, parser_t parser, wskip_t ws = white_space_not_endl
     auto end = std::end(stream);
     parser.parse(begin, end, ws);
 }
+
+namespace dsl
+{
+template <typename T> constexpr parser::int_parser<T> int_parser = parser::int_parser<T>{};
+
+constexpr parser::letter_parser_ignore_case letters_ignore_case = parser::letter_parser_ignore_case{};
+} // namespace dsl
+
 } // namespace parser

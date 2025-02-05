@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     int value = 0;
     auto caller_me = [](std::string_view view) -> void { std::cout << "From call back: " << view << '\n'; };
     std::string_view letters;
-    auto digit = parser::int_parser<int>()[caller_me] >> parser::letter_parser(letters);
+    auto digit = parser::dsl::int_parser<int> >> parser::dsl::letters_ignore_case;
     std::string_view test = "123   abc";
     parser::parse(test, digit, parser::white_space_not_endl{});
     std::cout << '\n' << "Found: " << value << " and " << letters << '\n';
