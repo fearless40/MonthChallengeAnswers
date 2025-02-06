@@ -1,5 +1,6 @@
 #pragma once
 
+#include "charutil.hpp"
 #include "concepts.hpp"
 #include <concepts>
 #include <iterator>
@@ -52,7 +53,7 @@ template <CharIterator begin_t, typename end_t> constexpr bool match_numbers(beg
 template <CharIterator begin_t, typename end_t> constexpr bool match_lcase_letters(begin_t &begin, end_t &end)
 {
     bool matched = false;
-    while (begin != end && (to_lower(*begin) >= 'a' && to_lower(*begin) <= 'z'))
+    while (begin != end && (util::to_lower(*begin) >= 'a' && util::to_lower(*begin) <= 'z'))
     {
         ++begin;
         matched = true;
@@ -61,9 +62,9 @@ template <CharIterator begin_t, typename end_t> constexpr bool match_lcase_lette
     return matched;
 }
 
-template <CharIterator begin_t, typename end_t> constexpr begin_t match_char(begin_t begin, end_t end, char letter)
+template <CharIterator begin_t, typename end_t> constexpr bool match_char(begin_t &begin, end_t end, char letter)
 {
-    if (*begin == letter)
+    if (begin != end && *begin == letter)
     {
         ++begin;
         return true;

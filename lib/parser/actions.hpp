@@ -1,11 +1,16 @@
 #pragma once
 
+#include "baseconv.hpp"
+#include <algorithm>
+#include <type_traits>
+
 namespace parser
 {
 template <typename invokable_t, typename parser_t> struct action_invoke
 {
-    using parser_tag = parser_t::parser_tag;
-    using attributes = parser_t::attributes;
+    using wrapped_parser_t = std::remove_cvref_t<parser_t>;
+    using parser_tag = std::remove_cvref_t<parser_t>::parser_tag;
+    using attributes = wrapped_parser_t::attributes;
 
     invokable_t invokable;
     parser_t parser;
@@ -27,14 +32,14 @@ template <typename invokable_t, typename parser_t> struct action_invoke
         return false;
     }
 };
-
 template <typename int_t, typename parser_t> struct action_int_ref
 {
     int_t &value;
     parser_t parser;
 
+    using wrapped_parser_t = std::remove_cvref_t<parser_t>;
     using parser_tag = parser_t::parser_tag;
-    using attributes = parser_t::attributes;
+    using attributes = wrapped_parser_t::attributes;
 
     action_int_ref(int_t &val, parser_t &&parser_wrapper) : value(val), parser(parser_wrapper)
     {
@@ -59,10 +64,12 @@ template <typename array_t, typename parser_t> struct action_array_like
     array_t &value;
     parser_t parser;
 
-    using parser_tag = typename parser_t::parser_tag;
-    using attributes = typename parser_t::attributes;
+    using wrapped_parser_t = std::remove_cvref_t<parser_t>;
+    using parser_tag = parser_t::parser_tag;
+    using attributes = wrapped_parser_t::attributes;
 
-    action_array_like(array_t &val, parser_t &&parser_wrapper) : value(val), parser(parser_wrapper)
+    action_array_like(array_t &val, parser_t parser_wrapper)
+        : value(val), parser(std::forward<parser_t>(parser_wrapper))
     {
     }
 

@@ -1,26 +1,34 @@
 #pragma once
 
+#include "attributes.hpp"
+#include "concepts.hpp"
+
+namespace parser
+{
 template <typename p1_t, typename p2_t> struct follows
 {
     p1_t p1;
     p2_t p2;
 
-    using parser_tag = detail::parser_tag;
+    using parser_tag = attributes::parser_tag;
+    using attributes = attributes::Attributes<attributes::ws_always>;
+    using parser1_t = std::remove_cvref_t<p1_t>;
+    using parser2_t = std::remove_cvref_t<p2_t>;
 
-    constexpr follows(p1_t &parse1, p2_t &parse2) : p1(parse1), p2(parse2) {};
+    constexpr follows(p1_t parse1, p2_t parse2) : p1(parse1), p2(parse2) {};
 
     template <class begin_t, class end_t, class wskip_t>
     constexpr bool parse(begin_t &begin, end_t &end, wskip_t ws) const noexcept
     {
-        if constexpr (detail::attributes::never_calls_ws<typename p1_t::attributes>)
+        if constexpr (concepts::never_calls_ws<typename parser1_t::attributes>)
         {
             ws.parse(begin, end, ws);
         }
 
         if (p1.parse(begin, end, ws))
         {
-            static_assert(detail::attributes::never_calls_ws<typename p2_t::attributes> == true);
-            if constexpr (detail::attributes::never_calls_ws<typename p2_t::attributes>)
+
+            if constexpr (concepts::never_calls_ws<typename parser2_t::attributes>)
             {
                 ws.parse(begin, end, ws);
             }
@@ -29,3 +37,4 @@ template <typename p1_t, typename p2_t> struct follows
         return false;
     }
 };
+} // namespace parser
