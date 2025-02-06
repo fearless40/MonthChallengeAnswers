@@ -5,4 +5,6 @@ add_library( challenges
 
 target_include_directories( challenges 
     PUBLIC include
-)   
+)
+
+add_subdirectory( parser )    

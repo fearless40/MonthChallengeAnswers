@@ -14,4 +14,5 @@ target_include_directories( challenge02
 target_link_libraries(  challenge02
     PRIVATE challenges
     PRIVATE clipp
+    PRIVATE parser
     )
