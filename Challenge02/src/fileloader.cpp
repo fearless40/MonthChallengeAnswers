@@ -100,7 +100,7 @@ Game load_from_file(std::filesystem::path filename, ErrorReport &error)
         return {};
     }
 
-    Game ret{(uint16_t)rowCount, (uint16_t)colCount, 2, 5};
+    Game ret{(std::uint16_t)rowCount, (std::uint16_t)colCount, 2, 5};
     ret.players.reserve(nbrPlayers);
 
     for (size_t playerId = 0; playerId < nbrPlayers; ++playerId)

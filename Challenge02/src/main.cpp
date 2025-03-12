@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     std::string_view letters;
     auto digit = dsl::int_parser<int>(value) >> dsl::letters_ignore_case(letters);
     std::string_view test = "123   abc";
-    auto excel_fmt = (dsl::letters_ignore_case + dsl::int_parser<uint16_t>)(letters) >>
+    auto excel_fmt = (dsl::letters_ignore_case + dsl::int_parser<std::uint16_t>)(letters) >>
                      dsl::letters_ignore_case([](auto str) { std::cout << "And found " << str << '\n'; });
     parser::parse(test, digit, dsl::white_space_not_endl);
     std::cout << '\n' << "Found: " << value << " and " << letters << '\n';

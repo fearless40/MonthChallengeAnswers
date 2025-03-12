@@ -71,23 +71,23 @@ struct Player
         return any_collision(ships, [](auto &ship) { return ship.location; });
     }
 
-    std::optional<Ship> ship_at_position(uint16_t row, uint16_t col) const;
+    std::optional<Ship> ship_at_position(std::uint16_t row, std::uint16_t col) const;
 
     bool generate_random_ships(Game const &game, ErrorReport &report);
 };
 
 struct Game
 {
-    uint16_t rows;
-    uint16_t cols;
+    std::uint16_t rows;
+    std::uint16_t cols;
     uint32_t minShipSize;
     uint32_t maxShipSize;
     std::vector<Player> players;
 
-    constexpr static bool valid_row_col(uint16_t row, uint16_t col)
+    constexpr static bool valid_row_col(std::uint16_t row, std::uint16_t col)
     {
-        return row >= 0 && row < std::numeric_limits<uint16_t>::max() && col >= 0 &&
-               col < std::numeric_limits<uint16_t>::max();
+        return row >= 0 && row < std::numeric_limits<std::uint16_t>::max() && col >= 0 &&
+               col < std::numeric_limits<std::uint16_t>::max();
     }
 
     constexpr bool valid_pos(RowCol pos) const noexcept

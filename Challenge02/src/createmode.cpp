@@ -10,16 +10,16 @@ std::optional<Ship> parse_ship(std::string_view str)
     namespace dsl = parser::dsl;
     std::string_view angle;
     RowCol position;
-    uint16_t ship_id;
+    std::uint16_t ship_id;
 
     auto parse_position = (dsl::letters_ignore_case +
-                           dsl::int_parser<uint16_t>)([&position](auto str) { position = RowCol::from_string(str); });
-    auto parse_ship = dsl::int_parser<uint16_t>(ship_id) >> dsl::single_char<':'> >> parse_position >>
+                           dsl::int_parser<std::uint16_t>)([&position](auto str) { position = RowCol::from_string(str); });
+    auto parse_ship = dsl::int_parser<std::uint16_t>(ship_id) >> dsl::single_char<':'> >> parse_position >>
                       dsl::single_char<':'> >> dsl::letters_ignore_case(angle);
     if (parser::parse(str, parse_ship, parser::empty{}))
     {
-        uint16_t w = 0;
-        uint16_t h = 0;
+        std::uint16_t w = 0;
+        std::uint16_t h = 0;
         if (angle == "H" || angle == "h")
         {
             w = ship_id - 1;

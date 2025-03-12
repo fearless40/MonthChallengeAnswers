@@ -4,9 +4,8 @@ cmake_minimum_required(VERSION 3.4...3.8)
 ### Require out-of-source builds
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
 if(EXISTS "${LOC_PATH}")
-    message(FATAL_ERROR "You cannot build in a source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory. Feel free to remove CMakeCache.txt and CMakeFiles.")
+  message(FATAL_ERROR "You cannot build in a source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory. Feel free to remove CMakeCache.txt and CMakeFiles.")
 endif()
-
 
 project(ChallengeAnswers VERSION 1.0
         DESCRIPTION "Simple programs to solve the monthly challenges"
@@ -18,13 +17,15 @@ set_property(GLOBAL PROPERTY CMAKE_CXX_EXTENSIONS Off)
 
 #set_property(GLOBAL PROPERTY CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCEDIR}/bin")
 
-if (MSVC_VERSION GREATER_EQUAL "1900")
-    include(CheckCXXCompilerFlag)
-    CHECK_CXX_COMPILER_FLAG("/std:c++20" _cpp_20_flag_supported)
-    if (_cpp_20_flag_supported)
-        add_compile_options("/std:c++20")
-    endif()
-    add_compile_options("/WX" "/MP")
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  CHECK_COMPILERER_FLAG("/std:c++20" _cpp_20_flag_supported)
+  if (_cpp_20_flag_supported)
+    add_compile_options("/std:c++20")
+  endif()
+  add_compile_options("/WX" "/MP")
+else()
+  add_compile_options("-std=c++20")
+
 endif()
 
 add_subdirectory(external)
