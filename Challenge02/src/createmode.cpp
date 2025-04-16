@@ -65,10 +65,8 @@ int run_command_mode_create(const commandline::ProgramOptions &opt) {
   game.report_game_is_valid(report);
   print_player(game, game.players.front());
 
-  if (filewriter::write_to_file(game, opt.filename,
-                                filewriter::Format::Challenge02)) {
-    report.errors.push_back("Could not write to file. ");
-  }
+  filewriter::write_file(report, game, opt.filename,
+                         filewriter::FileVersion::Challenge2);
 
   if (report) {
     std::ranges::for_each(report.errors, [](const std::string &str) {

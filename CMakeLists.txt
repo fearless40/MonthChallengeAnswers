@@ -14,8 +14,7 @@ project(ChallengeAnswers VERSION 1.0
 set_property(GLOBAL PROPERTY CMAKE_CXX_STANDARD  20)
 set_property(GLOBAL PROPERTY CMAKE_CXX_STANDARD_REQUIRED On)
 set_property(GLOBAL PROPERTY CMAKE_CXX_EXTENSIONS Off)
-
-#set_property(GLOBAL PROPERTY CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCEDIR}/bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE}")
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   CHECK_COMPILERER_FLAG("/std:c++20" _cpp_20_flag_supported)
@@ -31,6 +30,8 @@ endif()
 add_subdirectory(external)
 add_subdirectory(Challenge01)
 add_subdirectory(Challenge02)
+add_subdirectory(Challenge03)
 add_subdirectory(lib)
+
 
 

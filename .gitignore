@@ -31,10 +31,15 @@
 *.out
 *.app
 
+# Compiler files
+*.pdb 
+
 #Directories 
 /external/*
 /build/*
-/bin/
+/bin/*
+/.cache/*
+/.vscode/*
 
 #Do not ignore CMakeLists
 !/external/CMakeLists.txt
