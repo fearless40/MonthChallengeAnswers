@@ -20,7 +20,8 @@ ErrorReport &write_player_challenge2(ErrorReport &error, std::fstream &file,
         file << ',';
     }
 
-    file << '\n';
+    if (row < game.rows - 1)
+      file << '\n';
   }
   return error;
 }
@@ -28,9 +29,9 @@ ErrorReport &write_player_challenge2(ErrorReport &error, std::fstream &file,
 ErrorReport &write_file(ErrorReport &report, Game &game, std::string path,
                         FileVersion version) {
 
-  std::fstream file(path);
+  std::fstream file(path, std::ios::out | std::ios::ate);
 
-  if (file.bad()) {
+  if (file.bad() || file.fail()) {
     report("Could not write to file for some reason.");
     return report;
   }
