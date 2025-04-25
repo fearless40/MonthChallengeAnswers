@@ -2,7 +2,11 @@
 #include <cstddef>
 
 namespace ProgramOptions {
+
+enum class RunMode { run, ailist, version, help, about };
+
 struct Options {
+  RunMode mode;
   std::size_t rows_count{10};
   std::size_t cols_count{10};
   std::size_t ai_id{0};

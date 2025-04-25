@@ -1,6 +1,7 @@
 add_executable( challenge03 
     src/main.cpp
     src/commandline.cpp
+    src/stupidai.cpp
 )
 
 target_include_directories( challenge03

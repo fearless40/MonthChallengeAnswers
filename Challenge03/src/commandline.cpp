@@ -13,35 +13,35 @@ std::optional<ProgramOptions::Options> parse_command_line(int argc,
 
   using namespace clipp;
 
-  auto cli = (clipp::option("--rows") & value("Number of rows", opt.rows_count),
-              option("--cols") & value("Number of columns", opt.cols_count),
-              option("--ai") & clipp::value("AI ID selector", opt.ai_id),
-              (option("--ships") & value("Smallest ship size", opt.ship_start) &
-               value("Largest ship size", opt.ship_end))) |
-             (option("--aicount").set(opt.print_ai_count_only, true)) |
-             (option("help").set(print_help, true)) |
-             (option("version").set(print_version, true)) |
-             (option("about").set(print_about, true));
+  auto run_cli =
+      (command("run").set(opt.mode, ProgramOptions::RunMode::run),
+       (option("--rows") & value("Number of rows", opt.rows_count),
+        option("--cols") & value("Number of columns", opt.cols_count),
+        option("--ai") & clipp::value("AI ID selector", opt.ai_id),
+        (option("--ships") & value("Smallest ship size", opt.ship_start) &
+         value("Largest ship size", opt.ship_end))));
+  auto ai_cli = (command("ai").set(opt.mode, ProgramOptions::RunMode::ailist),
+                 option("--details").set(opt.print_ai_count_only, true));
+
+  auto help_cli =
+      (command("help").set(opt.mode, ProgramOptions::RunMode::help));
+  auto version_cli =
+      (command("version").set(opt.mode, ProgramOptions::RunMode::version));
+  auto about_cli =
+      (command("about").set(opt.mode, ProgramOptions::RunMode::about));
+
+  auto cli = run_cli | ai_cli | help_cli | version_cli | about_cli;
 
   if (clipp::parse(argc, argv, cli)) {
-    if (print_help) {
+    if (opt.mode == ProgramOptions::RunMode::help) {
       std ::cout << clipp::make_man_page(cli, "challenge03");
-      return {};
-    } else if (print_version) {
-      std ::cout << "Version: 1.0\n";
-      return {};
-    } else if (print_about) {
-      std::cout << "\nSee "
-                   "https://github.com/fearless40/MonthChallenges/blob/main/"
-                   "Challenge03/Challenge03.md for details. This program "
-                   "follows the instructions of the challenge.\n";
-      return {};
+      return opt;
     }
 
-    return opt;
   } else {
     std::cout << clipp::usage_lines(cli, "challenge03");
     return {};
   }
+  return opt;
 }
 } // namespace commandline
