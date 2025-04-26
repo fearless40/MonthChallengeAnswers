@@ -21,7 +21,7 @@ std::optional<ProgramOptions::Options> parse_command_line(int argc,
         (option("--ships") & value("Smallest ship size", opt.ship_start) &
          value("Largest ship size", opt.ship_end))));
   auto ai_cli = (command("ai").set(opt.mode, ProgramOptions::RunMode::ailist),
-                 option("--details").set(opt.print_ai_count_only, true));
+                 option("--details").set(opt.print_ai_count_only, false));
 
   auto help_cli =
       (command("help").set(opt.mode, ProgramOptions::RunMode::help));

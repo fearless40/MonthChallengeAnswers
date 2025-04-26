@@ -1,3 +1,4 @@
+#include "baseconv.hpp"
 #include "commandline.hpp"
 #include "game.hpp"
 #include "programoptions.hpp"
@@ -64,6 +65,8 @@ std::unique_ptr<AI> get_ai_by_id(std::size_t id) {
   }
 };
 
+std::size_t get_ai_count() { return 1; }
+
 int run_event_loop(ProgramOptions::Options opt) {
   // do nothing for now
   Battleship::BoardDescription game_desc{
@@ -73,9 +76,15 @@ int run_event_loop(ProgramOptions::Options opt) {
   std::cout << "Awaiting input: ";
   std::string input;
   auto ai = get_ai_by_id(opt.ai_id);
+  ai->new_game(game_desc);
+
   while (true) {
+    // Output the first guess from the AI
+    auto guess = ai->guess();
+    std::cout << guess.as_base26_fmt() << '\n';
     std::cin >> input;
     ParsedAction action = parse_actions_from_input(input);
+
     switch (action.action) {
 
     case InputAction::unknownaction:
@@ -86,12 +95,12 @@ int run_event_loop(ProgramOptions::Options opt) {
       break;
     case InputAction::hit:
       ai->hit();
-      breakl;
+      break;
     case InputAction::sink:
       ai->sink(Battleship::ShipID{action.shipID});
       break;
     case InputAction::endgame:
-      ai - new_game(game_desc);
+      ai->new_game(game_desc);
       break;
     case InputAction::quitprogram:
       std::cout << "Quitting hope you had fun.\n";
@@ -100,8 +109,18 @@ int run_event_loop(ProgramOptions::Options opt) {
   }
 }
 
-void display_ai_list() {
-  // do nothing now
+void display_ai_list(ProgramOptions::Options const &opt) {
+
+  if (opt.print_ai_count_only) {
+    std::cout << get_ai_count() << '\n';
+    return;
+  }
+
+  for (std::size_t i = 0; i < get_ai_count(); ++i) {
+    auto ai = get_ai_by_id(i);
+    std::cout << "AI ID: " << i << '\n';
+    std::cout << "Description: " << ai->description() << '\n';
+  }
 };
 
 int main(int argc, char *argv[]) {
@@ -113,7 +132,7 @@ int main(int argc, char *argv[]) {
       run_event_loop(opt);
       break;
     case ProgramOptions::RunMode::ailist:
-      display_ai_list();
+      display_ai_list(opt);
       break;
     case ProgramOptions::RunMode::help:
       return 0;

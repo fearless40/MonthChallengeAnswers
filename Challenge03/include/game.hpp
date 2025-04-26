@@ -1,4 +1,5 @@
 #pragma once
+#include "RowCol.hpp"
 #include <compare>
 #include <iterator>
 
@@ -41,14 +42,15 @@ struct BoardDescription {
   constexpr std::size_t end_cols() const { return cols.size; }
 };
 
-struct ShipPosition {
-  Row row;
-  Col col;
-
-  constexpr bool is_valid(const BoardDescription &desc) {
-    return row.size >= desc.begin_rows() && row.size < desc.end_rows() &&
-           col.size >= desc.begin_cols() && col.size < desc.end_cols();
-  }
-};
+using ShipPosition = RowCol;
+// struct ShipPosition {
+//   Row row;
+//   Col col;
+//
+//   constexpr bool is_valid(const BoardDescription &desc) {
+//     return row.size >= desc.begin_rows() && row.size < desc.end_rows() &&
+//            col.size >= desc.begin_cols() && col.size < desc.end_cols();
+//   }
+// };
 
 } // namespace Battleship

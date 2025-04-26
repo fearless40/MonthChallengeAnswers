@@ -9,4 +9,5 @@ target_include_directories( challenge03
     include)
 
 target_link_libraries( challenge03
-    PRIVATE clipp)
+    PRIVATE clipp
+    PRIVATE challenges)
