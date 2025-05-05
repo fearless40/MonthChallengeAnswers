@@ -7,19 +7,20 @@
 #include <ranges>
 #include <utility>
 
+namespace battleship {
 std::string RowCol::as_base26_fmt() const {
-  std::string result{base26::to_string(col)};
-  result.append(std::to_string(row));
+  std::string result{base26::to_string(col.size)};
+  result.append(std::to_string(row.size));
   return result;
 }
 
 std::string RowCol::as_colrow_fmt() const {
-  return std::format("{},{}", col, row);
+  return std::format("{},{}", col.size, row.size);
 }
 
-RowCol RowCol::random(std::uint16_t maxRow, std::uint16_t maxCol) {
-  return {randomns::between<std::uint16_t>(0, maxRow),
-          randomns::between<std::uint16_t>(0, maxCol)};
+RowCol RowCol::random(Row maxRow, Col maxCol) {
+  return RowCol{Row{randomns::between<std::uint16_t>(0, maxRow.size)},
+                Col{randomns::between<std::uint16_t>(0, maxCol.size)}};
 }
 
 bool from_chars(std::string_view const value, std::uint16_t &out) {
@@ -40,7 +41,7 @@ RowCol parse_comma_fmt(const std::string_view value) {
 
   RowCol ret;
 
-  if (from_chars(colText, ret.col) && from_chars(rowText, ret.row)) {
+  if (from_chars(colText, ret.col.size) && from_chars(rowText, ret.row.size)) {
     return ret;
   }
   return {};
@@ -69,10 +70,11 @@ RowCol RowCol::from_string(std::string_view const value) {
   auto letters = value.substr(0, pos);
 
   RowCol ret;
-  if (from_chars(value.substr(pos), ret.row)) {
-    ret.col = static_cast<std::uint16_t>(base26::from_string(letters));
+  if (from_chars(value.substr(pos), ret.row.size)) {
+    ret.col.size = static_cast<std::uint16_t>(base26::from_string(letters));
     return ret;
   }
 
   return {};
 }
+} // namespace battleship

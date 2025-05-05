@@ -73,7 +73,7 @@ int run_event_loop(ProgramOptions::Options opt) {
       Battleship::Row{opt.rows_count}, Battleship::Col{opt.cols_count},
       Battleship::ShipSize{opt.ship_start}, Battleship::ShipSize{opt.ship_end}};
 
-  std::cout << "Awaiting input: ";
+  // std::cout << "Awaiting input: ";
   std::string input;
   auto ai = get_ai_by_id(opt.ai_id);
   ai->new_game(game_desc);
