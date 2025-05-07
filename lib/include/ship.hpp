@@ -31,27 +31,60 @@ struct Ship {
   constexpr ShipDefinition id() const noexcept { return shiplength; }
 };
 
-struct Ships {
-  std::vector<Ship> m_ships;
+using Ships = std::vector<Ship>;
 
-  constexpr bool check_if_position_collides(AABB position) {
-    for (auto &ship : m_ships) {
-      if (aabb_collision(position, ship.location))
-        return true;
-    }
-    return false;
-  }
+enum class ShotStatus { hit, miss, invalid };
 
-  constexpr bool any_collisions() {
-    return any_collision(m_ships, [](auto &ship) { return ship.location; });
-  }
-
-  std::optional<Ship> ship_at_position(RowCol pos) const {
-    return ship_at_position(pos.row, pos.col);
-  }
-  std::optional<Ship> ship_at_position(Row row, Col col) const;
-
-  bool generate_random_ships(GameLayout const &game);
+struct ShipCollision {
+  ShotStatus status;
+  ShipDefinition id;
+  constexpr operator bool() const { return status == ShotStatus::hit; }
 };
+
+std::optional<Ships> random_ships(GameLayout const &layout);
+
+constexpr ShipCollision shot_at(Ships const &ships, RowCol const &shot) {
+  for (auto &ship : ships) {
+    if (ship.location.contains_point((int)shot.col.size, (int)shot.row.size)) {
+      return {ShotStatus::hit, ship.id()};
+    }
+  }
+  return {ShotStatus::miss, 0};
+}
+
+constexpr bool ships_collide(Ship const &ship1, Ship const &ship2) {
+  return aabb_collision(ship1.location, ship2.location);
+}
+
+std::optional<Ship> ship_at_position(Ships const &ships, RowCol pos);
+std::optional<Ship> ship_at_position(Ships const &ships, Row r, Col c) {
+  return ship_at_position(ships, RowCol{r, c});
+}
+constexpr bool any_collisions(Ships const &ships) {
+  return any_collision(ships, [](auto &ship) { return ship.location; });
+}
+
+// struct Ships {
+//   std::vector<Ship> m_ships;
+//
+//   constexpr bool check_if_position_collides(AABB position) {
+//     for (auto &ship : m_ships) {
+//       if (aabb_collision(position, ship.location))
+//         return true;
+//     }
+//     return false;
+//   }
+//
+//   constexpr bool any_collisions() {
+//     return any_collision(m_ships, [](auto &ship) { return ship.location; });
+//   }
+//
+//   std::optional<Ship> ship_at_position(RowCol pos) const {
+//     return ship_at_position(pos.row, pos.col);
+//   }
+//   std::optional<Ship> ship_at_position(Row row, Col col) const;
+//
+//   bool generate_random_ships(GameLayout const &game);
+// };
 
 } // namespace battleship
