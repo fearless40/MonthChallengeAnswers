@@ -2,6 +2,7 @@
 #include "RowCol.hpp"
 #include "collisions.hpp"
 #include "gamelayout.hpp"
+#include <cstddef>
 #include <optional>
 #include <vector>
 
@@ -26,6 +27,24 @@ struct Ship {
   constexpr bool is_valid() const noexcept {
     return (row_size() == 0 && col_size() == shiplength.size - 1) ||
            (row_size() == shiplength.size - 1 && col_size() == 0);
+  }
+
+  constexpr std::optional<std::size_t> ship_section_hit(RowCol const &pos) {
+    int x = static_cast<int>(pos.col.size);
+    int y = static_cast<int>(pos.row.size);
+
+    if (!location.contains_point(x, y))
+      return {};
+
+    int yIndex = y - location.y;
+    int xIndex = x - location.x;
+
+    if (yIndex == 0)
+      return static_cast<std::size_t>(xIndex);
+    if (xIndex == 0)
+      return static_cast<std::size_t>(yIndex);
+
+    return {};
   }
 
   constexpr ShipDefinition id() const noexcept { return shiplength; }
@@ -76,7 +95,8 @@ constexpr bool any_collisions(Ships const &ships) {
 //   }
 //
 //   constexpr bool any_collisions() {
-//     return any_collision(m_ships, [](auto &ship) { return ship.location; });
+//     return any_collision(m_ships, [](auto &ship) { return ship.location;
+//     });
 //   }
 //
 //   std::optional<Ship> ship_at_position(RowCol pos) const {

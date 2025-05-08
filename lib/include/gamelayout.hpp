@@ -23,6 +23,10 @@ struct GameLayout {
 
     return true;
   }
+
+  constexpr std::size_t shipdef_to_index(ShipDefinition ship) const {
+    return ship.size - minShipSize.size;
+  }
 };
 
 } // namespace battleship
