@@ -1,6 +1,7 @@
 #include "ship.hpp"
 #include "RandomUtil.hpp"
 #include "collisions.hpp"
+#include <iostream>
 #include <terminal.hpp>
 
 namespace battleship {
@@ -21,14 +22,18 @@ std::optional<Ships> random_ships(GameLayout const &game) {
   if (!game.is_valid())
     return {};
 
-  Ships ships{game.maxShipSize.size - game.minShipSize.size + 1};
+  Ships ships;
+  ships.reserve(game.maxShipSize.size - game.minShipSize.size + 1);
 
   for (ShipDefinition ship_id = game.minShipSize;
        ship_id.size < game.maxShipSize.size + 1; ++ship_id.size) {
+    // std::cout << "Attempting to build placement for ship: " << ship_id.size
+    // << '\n';
 
     ships.emplace_back(ship_id, AABB{});
+    // std::cout << "Ships array: " << ships.size() << '\n';
 
-    for (size_t count_attempts = 0; count_attempts < 1000; ++count_attempts) {
+    for (size_t count_attempts = 0; count_attempts < 400; ++count_attempts) {
       Orientation layout = randomns::coin_flip() == true
                                ? Orientation::Horizontal
                                : Orientation::Vertical;
@@ -41,14 +46,19 @@ std::optional<Ships> random_ships(GameLayout const &game) {
       int col = randomns::between(0, game.nbrCols.size - 1 - width);
       ships.back().location = AABB{col, row, col + width, row + height};
       if (!any_collisions(ships)) {
-        // report(std::format("Player {} generated: {} after {} tries", name,
+        // std::cout << "No collision placed ship\n";
+        // std::format("Player {} generated: {} after {} tries", name,
         // ship_id, count_attempts));
         break;
+      } else {
+        // std::cout << "Ships collided.\n";
       }
     }
   }
-  if (any_collisions(ships))
+  if (any_collisions(ships)) {
+    // std::cout << "Collisions still after placement.\n";
     return {};
+  }
 
   return ships;
 }

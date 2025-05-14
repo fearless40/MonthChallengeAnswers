@@ -13,8 +13,8 @@ struct GameBoardPosition {
   using type = SizeT;
   explicit GameBoardPosition(SizeT sz) : size(sz) {}
   SizeT size;
-  auto operator<=>(GameBoardPosition<Tag> const &other) const = default;
-  bool operator==(GameBoardPosition<Tag> const &other) const = default;
+  auto operator<=>(GameBoardPosition<Tag, SizeT> const &other) const = default;
+  bool operator==(GameBoardPosition<Tag, SizeT> const &other) const = default;
 };
 
 namespace Tags {

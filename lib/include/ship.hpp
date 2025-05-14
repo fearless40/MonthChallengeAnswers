@@ -76,9 +76,9 @@ constexpr bool ships_collide(Ship const &ship1, Ship const &ship2) {
 }
 
 std::optional<Ship> ship_at_position(Ships const &ships, RowCol pos);
-std::optional<Ship> ship_at_position(Ships const &ships, Row r, Col c) {
-  return ship_at_position(ships, RowCol{r, c});
-}
+// std::optional<Ship> ship_at_position(Ships const &ships, Row r, Col c) {
+//   return ship_at_position(ships, RowCol{r, c});
+// }
 constexpr bool any_collisions(Ships const &ships) {
   return any_collision(ships, [](auto &ship) { return ship.location; });
 }

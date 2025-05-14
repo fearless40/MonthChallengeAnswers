@@ -1,5 +1,6 @@
 add_library( challenges  
    src/RowCol.cpp
+   src/ship.cpp
 )
 
 
