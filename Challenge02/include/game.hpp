@@ -70,9 +70,9 @@ struct Game {
            col >= 0 && col < std::numeric_limits<std::uint16_t>::max();
   }
 
-  constexpr bool valid_pos(RowCol pos) const noexcept {
-    return (pos.row >= 0 and pos.row <= rows) and
-           (pos.col >= 0 and pos.col <= cols);
+  constexpr bool valid_pos(battleship::RowCol &pos) const noexcept {
+    return (pos.row.size >= 0 and pos.row.size <= rows) and
+           (pos.col.size >= 0 and pos.col.size <= cols);
   }
 
   bool report_game_is_valid(ErrorReport &report) const noexcept;

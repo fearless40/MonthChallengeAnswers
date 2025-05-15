@@ -10,12 +10,12 @@
 std::optional<Ship> parse_ship(std::string_view str) {
   namespace dsl = parser::dsl;
   std::string_view angle;
-  RowCol position;
+  battleship::RowCol position;
   std::uint16_t ship_id;
 
   auto parse_position = (dsl::letters_ignore_case +
                          dsl::int_parser<std::uint16_t>)([&position](auto str) {
-    position = RowCol::from_string(str);
+    position = battleship::RowCol::from_string(str);
   });
   auto parse_ship = dsl::int_parser<std::uint16_t>(ship_id) >>
                     dsl::single_char<':'> >> parse_position >>
@@ -29,7 +29,8 @@ std::optional<Ship> parse_ship(std::string_view str) {
       h = ship_id - 1;
     }
 
-    AABB pos{position.col, position.row, position.col + w, position.row + h};
+    AABB pos{position.col.size, position.row.size, position.col.size + w,
+             position.row.size + h};
     return Ship{ship_id, pos};
   }
 

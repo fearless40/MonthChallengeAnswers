@@ -1,12 +1,15 @@
 #include "baseconv.hpp"
 #include "commandline.hpp"
 #include "game.hpp"
+#include "guessallai.hpp"
 #include "programoptions.hpp"
 #include "stupidai.hpp"
 #include <charconv>
 #include <iostream>
 #include <iterator>
 #include <memory>
+
+using std::make_unique;
 
 void debug_program_options(ProgramOptions::Options &opt) {
   std::cout << "---------------" << '\n';
@@ -62,10 +65,12 @@ std::unique_ptr<AI> get_ai_by_id(std::size_t id) {
   default:
   case 0:
     return std::make_unique<StupidAI>();
+  case 1:
+    return make_unique<GuessAllAi>();
   }
 };
 
-std::size_t get_ai_count() { return 1; }
+std::size_t get_ai_count() { return 2; }
 
 int run_event_loop(ProgramOptions::Options opt) {
   // do nothing for now
@@ -81,7 +86,11 @@ int run_event_loop(ProgramOptions::Options opt) {
   while (true) {
     // Output the first guess from the AI
     auto guess = ai->guess();
-    std::cout << guess.as_base26_fmt() << '\n';
+    if (guess)
+      std::cout << guess.value().as_base26_fmt() << '\n';
+    else
+      std::cout << "-\n"; // Tell the tester that no more guess
+
     std::cin >> input;
     ParsedAction action = parse_actions_from_input(input);
 

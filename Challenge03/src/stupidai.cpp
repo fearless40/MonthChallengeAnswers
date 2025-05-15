@@ -2,6 +2,7 @@
 #include "RowCol.hpp"
 #include "game.hpp"
 
-Battleship::ShipPosition StupidAI::guess() {
-  return RowCol::random(game.rows.size, game.cols.size);
+std::optional<Battleship::ShipPosition> StupidAI::guess() {
+  return battleship::RowCol::random(battleship::Row(game.rows.size),
+                                    battleship::Col(game.cols.size));
 }

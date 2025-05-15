@@ -42,7 +42,7 @@ struct BoardDescription {
   constexpr std::size_t end_cols() const { return cols.size; }
 };
 
-using ShipPosition = RowCol;
+using ShipPosition = battleship::RowCol;
 // struct ShipPosition {
 //   Row row;
 //   Col col;
