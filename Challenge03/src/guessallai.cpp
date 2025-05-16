@@ -6,8 +6,10 @@
 
 std::optional<Battleship::ShipPosition> GuessAllAi::guess() {
 
-  if (m_col.size == game.cols.size)
+  if (m_col.size == game.cols.size) {
     ++m_row.size;
+    m_col.size = 0;
+  }
   if (m_row.size == game.rows.size)
     return {};
 
