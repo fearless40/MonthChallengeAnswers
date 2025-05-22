@@ -27,6 +27,11 @@ struct GameLayout {
   constexpr std::size_t shipdef_to_index(ShipDefinition ship) const {
     return ship.size - minShipSize.size;
   }
+
+  constexpr bool is_row_col_valid(RowCol const &pos) const noexcept {
+    return (pos.row >= Row(0) && pos.row < nbrRows) and
+           (pos.col >= Col(0) and pos.col < nbrCols);
+  }
 };
 
 } // namespace battleship
