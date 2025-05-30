@@ -16,6 +16,8 @@ public:
 
   void new_game(Battleship::BoardDescription &game_input) override {
     game = game_input;
+    m_row = battleship::Row(0);
+    m_col = battleship::Col(0);
   }
 
   void hit() override {
