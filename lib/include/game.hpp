@@ -1,10 +1,8 @@
 #pragma once
-#include "Array2D.hpp"
 #include "RowCol.hpp"
-#include "error.hpp"
+#include "gamelayout.hpp"
 #include <collisions.hpp>
 #include <optional>
-#include <string>
 #include <vector>
 
 namespace battleship {
@@ -34,12 +32,12 @@ struct Ship {
   constexpr uint32_t id() const noexcept { return shiplength.size; }
 };
 
-struct GameLayout {
-  ShipDefinition minShipSize{2};
-  ShipDefinition maxShipSize{5};
-  Row nbrRows{10};
-  Col nbrCols{10};
-};
+// struct GameLayout {
+//   ShipDefinition minShipSize{2};
+//   ShipDefinition maxShipSize{5};
+//   Row nbrRows{10};
+//   Col nbrCols{10};
+// };
 
 struct Ships {
   std::vector<Ship> ships;

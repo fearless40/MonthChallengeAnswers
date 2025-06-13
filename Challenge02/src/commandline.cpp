@@ -49,12 +49,12 @@ ProgramOptions parse(int argc, char *argv[]) {
   auto result = clipp::parse(argc, argv, cli);
 
   if (!result) {
-    std::cout << "Usage: \n" << clipp::usage_lines(cli, "challenge02") << '/n';
+    std::cout << "Usage: \n" << clipp::usage_lines(cli, "challenge02") << '\n';
     return {};
   }
 
   if (opt.mode == RunMode::Help) {
-    std::cout << clipp::make_man_page(cli, "challenge02") << '/n';
+    std::cout << clipp::make_man_page(cli, "challenge02") << '\n';
     return {};
   }
 

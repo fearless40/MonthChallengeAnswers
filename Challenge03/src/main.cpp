@@ -1,3 +1,4 @@
+#include "averageai.hpp"
 #include "baseconv.hpp"
 #include "commandline.hpp"
 #include "game.hpp"
@@ -66,11 +67,13 @@ std::unique_ptr<AI> get_ai_by_id(std::size_t id) {
   case 0:
     return std::make_unique<StupidAI>();
   case 1:
-    return make_unique<GuessAllAi>();
+    return std::make_unique<GuessAllAi>();
+  case 2:
+    return std::make_unique<AverageAI>();
   }
 };
 
-std::size_t get_ai_count() { return 2; }
+std::size_t get_ai_count() { return 3; }
 
 int run_event_loop(ProgramOptions::Options opt) {
   // do nothing for now

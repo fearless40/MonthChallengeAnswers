@@ -3,6 +3,7 @@ add_executable( challenge03
     src/commandline.cpp
     src/stupidai.cpp
     src/guessallai.cpp
+    src/averageai.cpp
 )
 
 target_include_directories( challenge03

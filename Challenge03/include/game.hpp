@@ -1,9 +1,7 @@
 #pragma once
 #include "RowCol.hpp"
-#include <compare>
-#include <iterator>
 
-namespace Battleship {
+namespace battleship {
 struct ShipSize {
   std::size_t size;
 
@@ -13,28 +11,30 @@ struct ShipSize {
 
 using ShipID = ShipSize;
 
-namespace detail {
-template <typename Tag> struct GameBoardPosition {
-  std::size_t size;
-  auto operator<=>(GameBoardPosition<Tag> const &other) const = default;
-  bool operator==(GameBoardPosition<Tag> const &other) const = default;
-};
-
-namespace Tags {
-struct row;
-struct col;
-}; // namespace Tags
-} // namespace detail
-
+// namespace detail {
+// template <class Tag> struct GameBoardPosition {
+//   std::size_t size;
+//   auto operator<=>(GameBoardPosition<Tag> const &other) const = default;
+//   bool operator==(GameBoardPosition<Tag> const &other) const = default;
+// };
+//
+// namespace Tags {
+// struct row;
+// struct col;
+// }; // namespace Tags
+// } // namespace detail
+//
 // Strong typing to prevent errors
-using Row = detail::GameBoardPosition<detail::Tags::row>;
-using Col = detail::GameBoardPosition<detail::Tags::col>;
+using Row =
+    battleship::detail::GameBoardPosition<battleship::detail::Tags::row>;
+using Col =
+    battleship::detail::GameBoardPosition<battleship::detail::Tags::col>;
 
 struct BoardDescription {
   Row rows;
   Col cols;
-  ShipSize min;
-  ShipSize max;
+  battleship::ShipSize min;
+  battleship::ShipSize max;
 
   constexpr std::size_t begin_rows() const { return 0; }
   constexpr std::size_t end_rows() const { return rows.size; }
@@ -53,4 +53,4 @@ using ShipPosition = battleship::RowCol;
 //   }
 // };
 
-} // namespace Battleship
+} // namespace battleship

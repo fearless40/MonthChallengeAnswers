@@ -42,6 +42,24 @@ struct RowCol {
   static RowCol random(Row maxRow, Col maxCol);
 
   static RowCol from_string(std::string_view const);
+
+  friend RowCol operator-(const RowCol &rc, const Row &r) {
+    return RowCol{Row{static_cast<unsigned short>(rc.row.size - r.size)},
+                  Col{rc.col}};
+  }
+  friend RowCol operator+(const RowCol &rc, const Row &r) {
+    return RowCol{Row{static_cast<unsigned short>(rc.row.size + r.size)},
+                  Col{rc.col}};
+  }
+  friend RowCol operator-(const RowCol &rc, const Col &c) {
+    return RowCol{Row{rc.row},
+                  Col{static_cast<Col::type>(rc.col.size - c.size)}};
+  }
+
+  friend RowCol operator+(const RowCol &rc, const Col &c) {
+    return RowCol{Row{rc.row},
+                  Col{static_cast<Col::type>(rc.col.size + c.size)}};
+  }
 };
 
 } // namespace battleship

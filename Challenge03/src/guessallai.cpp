@@ -1,10 +1,9 @@
 #include "guessallai.hpp"
 #include "RowCol.hpp"
 #include "game.hpp"
-#include <concepts>
 #include <optional>
 
-std::optional<Battleship::ShipPosition> GuessAllAi::guess() {
+std::optional<battleship::ShipPosition> GuessAllAi::guess() {
 
   if (m_col.size == game.cols.size) {
     ++m_row.size;
@@ -15,5 +14,5 @@ std::optional<Battleship::ShipPosition> GuessAllAi::guess() {
 
   auto col = m_col;
   ++m_col.size;
-  return Battleship::ShipPosition{m_row, col};
+  return battleship::ShipPosition{m_row, col};
 }
