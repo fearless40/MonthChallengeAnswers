@@ -50,6 +50,7 @@ template <typename T> struct Array2D {
       if (index > m_values.size())
         index = 0;
     } while (index != start_index);
+    return {};
   }
 
   constexpr bool is_valid_index(const RowCol &pos) const {

@@ -5,13 +5,14 @@
 
 class StupidAI : public AI {
 private:
-  Battleship::BoardDescription game;
-  Battleship::ShipPosition last_guess;
+  battleship::BoardDescription game;
+  battleship::ShipPosition last_guess;
 
 public:
   ~StupidAI() {}
+  StupidAI() {};
 
-  void new_game(Battleship::BoardDescription &game_input) override {
+  void new_game(battleship::BoardDescription &game_input) override {
     game = game_input;
   }
 
@@ -23,11 +24,11 @@ public:
 
   };
 
-  void sink(Battleship::ShipID shipId) override {
+  void sink(battleship::ShipID shipId) override {
 
   };
 
-  std::optional<Battleship::ShipPosition> guess() override;
+  std::optional<battleship::ShipPosition> guess() override;
 
   const std::string_view description() const override {
     return "A very stupid guesser that does not check if it has guessed the "

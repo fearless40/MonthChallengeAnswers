@@ -1,8 +1,6 @@
 #include "averageai.hpp"
 #include "RowCol.hpp"
 #include "game.hpp"
-#include <concepts>
-#include <cstddef>
 #include <optional>
 #include <random>
 
@@ -19,6 +17,7 @@ void AverageAI::new_game(battleship::BoardDescription &game_input) {
 battleship::RowCol AverageAI::set_guess(battleship::RowCol g) {
   last_guess = g;
   ++m_nbr_guess;
+  return last_guess;
 }
 
 std::optional<battleship::ShipPosition> AverageAI::guess() {

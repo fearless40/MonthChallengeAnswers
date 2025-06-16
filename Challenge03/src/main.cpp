@@ -1,5 +1,4 @@
 #include "averageai.hpp"
-#include "baseconv.hpp"
 #include "commandline.hpp"
 #include "game.hpp"
 #include "guessallai.hpp"
@@ -7,7 +6,6 @@
 #include "stupidai.hpp"
 #include <charconv>
 #include <iostream>
-#include <iterator>
 #include <memory>
 
 using std::make_unique;
@@ -77,9 +75,10 @@ std::size_t get_ai_count() { return 3; }
 
 int run_event_loop(ProgramOptions::Options opt) {
   // do nothing for now
-  Battleship::BoardDescription game_desc{
-      Battleship::Row{opt.rows_count}, Battleship::Col{opt.cols_count},
-      Battleship::ShipSize{opt.ship_start}, Battleship::ShipSize{opt.ship_end}};
+  battleship::BoardDescription game_desc{
+      battleship::Row{static_cast<unsigned short>(opt.rows_count)},
+      battleship::Col{static_cast<unsigned short>(opt.cols_count)},
+      battleship::ShipSize{opt.ship_start}, battleship::ShipSize{opt.ship_end}};
 
   // std::cout << "Awaiting input: ";
   std::string input;
@@ -109,7 +108,7 @@ int run_event_loop(ProgramOptions::Options opt) {
       ai->hit();
       break;
     case InputAction::sink:
-      ai->sink(Battleship::ShipID{action.shipID});
+      ai->sink(battleship::ShipID{action.shipID});
       break;
     case InputAction::endgame:
       ai->new_game(game_desc);

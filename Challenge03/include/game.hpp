@@ -31,10 +31,10 @@ using Col =
     battleship::detail::GameBoardPosition<battleship::detail::Tags::col>;
 
 struct BoardDescription {
-  Row rows;
-  Col cols;
-  battleship::ShipSize min;
-  battleship::ShipSize max;
+  Row rows{10};
+  Col cols{10};
+  battleship::ShipSize min{2};
+  battleship::ShipSize max{5};
 
   constexpr std::size_t begin_rows() const { return 0; }
   constexpr std::size_t end_rows() const { return rows.size; }

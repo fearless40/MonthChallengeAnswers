@@ -6,15 +6,15 @@
 
 class GuessAllAi : public AI {
 private:
-  Battleship::BoardDescription game;
-  Battleship::ShipPosition last_guess;
+  battleship::BoardDescription game;
+  battleship::ShipPosition last_guess;
   battleship::Row m_row{0};
   battleship::Col m_col{0};
 
 public:
   ~GuessAllAi() {}
 
-  void new_game(Battleship::BoardDescription &game_input) override {
+  void new_game(battleship::BoardDescription &game_input) override {
     game = game_input;
     m_row = battleship::Row(0);
     m_col = battleship::Col(0);
@@ -28,14 +28,14 @@ public:
 
   };
 
-  void sink(Battleship::ShipID shipId) override {
+  void sink(battleship::ShipID shipId) override {
 
   };
 
-  std::optional<Battleship::ShipPosition> guess() override;
+  std::optional<battleship::ShipPosition> guess() override;
 
   const std::string_view description() const override {
     return "Guess through the entire game starting at Row 0 Col 0. Very "
            "silly. ";
   }
-}
+};
