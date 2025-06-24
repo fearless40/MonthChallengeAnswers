@@ -25,7 +25,7 @@ template <typename T> struct Array2D {
   void resize(const Row &rowSize, const Col &colSize) {
     if (rowSize != m_rows || colSize != m_cols) {
 
-      m_values.reserve(rowSize.size * colSize.size);
+      m_values.resize(rowSize.size * colSize.size);
       m_rows = rowSize;
       m_cols = colSize;
     }
@@ -43,11 +43,12 @@ template <typename T> struct Array2D {
     std::size_t index = start_index;
 
     do {
+
       if (m_values[index] == value)
         return from_index(index);
 
       ++index;
-      if (index > m_values.size())
+      if (index >= m_values.size())
         index = 0;
     } while (index != start_index);
     return {};

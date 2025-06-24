@@ -1,9 +1,9 @@
 #include "averageai.hpp"
 #include "RowCol.hpp"
 #include "game.hpp"
+#include <iostream>
 #include <optional>
 #include <random>
-
 std::random_device rd("default");
 
 void AverageAI::new_game(battleship::BoardDescription &game_input) {
@@ -53,6 +53,8 @@ void AverageAI::miss() {
 
 void AverageAI::hit() {
   // Calculate a grid of values to try and add them to the list
+  m_guess.set(last_guess, Status::hit);
+
   auto up = last_guess - battleship::Row{1};
   auto down = last_guess + battleship::Row{1};
   auto left = last_guess - battleship::Col{1};
@@ -61,13 +63,16 @@ void AverageAI::hit() {
   if (m_guess.is_valid_index(up) && m_guess[up] == Status::unknown)
     m_next_guesses.push_back(up);
 
-  if (m_guess.is_valid_index(down) && m_guess[up] == Status::unknown)
+  if (m_guess.is_valid_index(down) && m_guess[down] == Status::unknown)
     m_next_guesses.push_back(down);
 
-  if (m_guess.is_valid_index(left) && m_guess[up] == Status::unknown)
+  if (m_guess.is_valid_index(left) && m_guess[left] == Status::unknown)
     m_next_guesses.push_back(left);
-  if (m_guess.is_valid_index(right) && m_guess[up] == Status::unknown)
+  if (m_guess.is_valid_index(right) && m_guess[right] == Status::unknown)
     m_next_guesses.push_back(right);
 }
 
-void AverageAI::sink(battleship::ShipID id) { m_sunk.push_back(id); }
+void AverageAI::sink(battleship::ShipID id) {
+  m_sunk.push_back(id);
+  m_guess.set(last_guess, Status::hit);
+}
