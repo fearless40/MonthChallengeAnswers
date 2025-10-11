@@ -1,7 +1,5 @@
 #pragma once
-#include <compare>
 #include <cstdint>
-#include <format>
 #include <string>
 #include <string_view>
 
@@ -15,7 +13,39 @@ struct GameBoardPosition {
   SizeT size;
   auto operator<=>(GameBoardPosition<Tag, SizeT> const &other) const = default;
   bool operator==(GameBoardPosition<Tag, SizeT> const &other) const = default;
+
+  GameBoardPosition<Tag, SizeT> &operator++() {
+    ++size;
+    return *this;
+  }
+  GameBoardPosition<Tag, SizeT> &operator--() {
+    --size;
+    return *this;
+  }
+
+  GameBoardPosition<Tag, SizeT> &
+  operator+=(const GameBoardPosition<Tag, SizeT> &value) {
+    size += value.size;
+    return *this;
+  }
+  GameBoardPosition<Tag, SizeT> &
+  operator-=(const GameBoardPosition<Tag, SizeT> &value) {
+    size -= value.size;
+    return *this;
+  }
+
+  friend GameBoardPosition<Tag, SizeT>
+  operator+(const GameBoardPosition<Tag, SizeT> &left,
+            const GameBoardPosition<Tag, SizeT> &right) {
+    return GameBoardPosition<Tag, SizeT>(left.size + right.size);
+  }
+  friend GameBoardPosition<Tag, SizeT>
+  operator-(const GameBoardPosition<Tag, SizeT> &left,
+            const GameBoardPosition<Tag, SizeT> &right) {
+    return GameBoardPosition<Tag, SizeT>(left.size - right.size);
+  }
 };
+;
 
 namespace Tags {
 struct row;

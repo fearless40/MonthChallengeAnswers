@@ -60,6 +60,9 @@ template <typename T> struct Array2D {
   }
 
   constexpr T &operator[](const RowCol &pos) { return m_values[to_index(pos)]; }
+  constexpr const T &operator[](const RowCol &pos) const {
+    return m_values[to_index(pos)];
+  }
 
   constexpr void set(const RowCol &pos, T const &value) {
     if (is_valid_index(pos)) {
@@ -75,7 +78,7 @@ template <typename T> struct Array2D {
     return m_values[index];
   }
 
-  constexpr std::size_t to_index(const RowCol &pos) {
+  constexpr std::size_t to_index(const RowCol &pos) const {
     return pos.row.size * m_cols.size + pos.col.size;
   }
 

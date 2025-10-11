@@ -2,6 +2,7 @@
 #include "RowCol.hpp"
 #include "error.hpp"
 #include <collisions.hpp>
+#include <limits>
 #include <optional>
 #include <string>
 #include <vector>

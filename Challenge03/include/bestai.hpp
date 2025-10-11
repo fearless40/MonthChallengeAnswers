@@ -11,12 +11,21 @@ private:
   battleship::BoardDescription game;
   battleship::ShipPosition last_guess;
   battleship::Array2D<Status> m_guess;
-  std::vector<battleship::RowCol> m_next_guesses;
+  battleship::Array2D<int> m_prob; // Probality of spot having a ship
   std::size_t m_nbr_guess{0};
   std::vector<battleship::ShipID> m_sunk;
 
 private: // Methods
   battleship::RowCol set_guess(battleship::RowCol g);
+  std::vector<int> ships_still_alive() const;
+  void clear_probability() noexcept;
+  battleship::RowCol get_highest_prob_of_ship() const noexcept;
+  void generate_probability() noexcept;
+
+  int test_cols_if_ship_fits(battleship::Row row, battleship::Col start_col,
+                             battleship::ShipID ship);
+  int test_rows_if_ship_fits(battleship::Col col, battleship::Row start_row,
+                             battleship::ShipID ship);
 
 public:
   ~BestAI() {}
